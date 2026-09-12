@@ -1486,6 +1486,74 @@
             }
         }
 
+        // ดึงรายชื่อพนักงานจาก Firebase ใส่ดรอปดาวน์
+        async function fetchApprovedEmployeesToDropdown(selectId) {
+            const selectElem = document.getElementById(selectId);
+            if (!selectElem) return;
+            try {
+                const snapshot = await db.collection("employees").where("is_approved", "==", true).get();
+                selectElem.innerHTML = '';
+                if (snapshot.empty) {
+                    selectElem.innerHTML = '<option value="">ยังไม่มีพนักงานที่อนุมัติ</option>';
+                    return;
+                }
+                if (selectId === 'filter_emp_name' || selectId === 'income_filter_emp') {
+                    selectElem.innerHTML = '<option value="ALL">-- แสดงทุกคน --</option>';
+                }
+                snapshot.forEach(doc => {
+                    const emp = doc.data();
+                    const opt = document.createElement('option');
+                    opt.value = emp.name;
+                    opt.innerText = `${emp.name} (${emp.position})`;
+                    selectElem.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Dropdown error:", err);
+            }
+        }
+
+        function setupEmployeeDropdown() { fetchApprovedEmployeesToDropdown('p_name'); }
+        function setupFilterEmployeeDropdown() { fetchApprovedEmployeesToDropdown('filter_emp_name'); }
+        function setupIncomeEmployeeDropdown() { fetchApprovedEmployeesToDropdown('income_filter_emp'); }
+
+        function renderWageSettingTable() {
+            const tbody = document.getElementById('wageSettingList');
+            if (!tbody) return;
+            db.collection("employees").where("is_approved", "==", true).get().then(snapshot => {
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">ยังไม่มีรายชื่อพนักงานที่อนุมัติ</td></tr>`;
+                    return;
+                }
+                let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
+                snapshot.forEach(doc => {
+                    let emp = doc.data();
+                    let currentWage = employeeWages[emp.name] !== undefined ? employeeWages[emp.name] : 500;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${emp.name}</td>
+                        <td class="p-3 text-gray-500">${emp.position}</td>
+                        <td class="p-3 text-right">
+                            <input type="number" id="wage_input_${doc.id}" value="${currentWage}" class="w-24 border rounded-lg px-2 py-1 text-right text-xs sm:text-sm">
+                        </td>
+                        <td class="p-3 text-center">
+                            <button type="button" onclick="saveEmployeeWage('${emp.name}', '${doc.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded-lg transition">บันทึก</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function saveEmployeeWage(empName, docId) {
+            let inputElem = document.getElementById(`wage_input_${docId}`);
+            let val = inputElem ? parseFloat(inputElem.value) || 0 : 500;
+            let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
+            employeeWages[empName] = val;
+            localStorage.setItem('tkp7_employee_wages', JSON.stringify(employeeWages));
+            alert(`✅ บันทึกเรทค่าแรง "${empName}" เป็น ${val} บาท/วัน แล้ว`);
+        }
+
         function renderDashboardSummary() {
             let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
             let weeklySum = 0, monthlySum = 0, yearlySum = 0;
@@ -1507,10 +1575,7 @@
             document.getElementById('dash_yearly').innerText = yearlySum.toLocaleString('th-TH', {minimumFractionDigits: 2});
         }
 
-        function switchHistoryTab(cat) {
-            renderTable();
-        }
-
+        function switchHistoryTab(cat) { renderTable(); }
         function deleteRecord(id) {
             if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
                 let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
@@ -1544,10 +1609,6 @@
 
         function renderIncomeTable() { renderTable(); }
         function renderUserTable() { listenEmployeesRealtime(); }
-        function renderWageSettingTable() {}
-        function setupEmployeeDropdown() {}
-        function setupFilterEmployeeDropdown() {}
-        function setupIncomeEmployeeDropdown() {}
 
         function startCamera() {
             const video = document.getElementById('videoElement');
@@ -1599,7 +1660,7 @@
         function saveExpense(e) { e.preventDefault(); alert('✅ บันทึกรายการรายจ่ายสำเร็จ!'); document.getElementById('formExpense').reset(); renderExpenseTable(); }
 
         function checkAuthStatus() {
-            const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user') || 'null');
+            const currentUser = JSON.parse(localStorage.getItem('tkp7_current_user') || 'null');
             const authView = document.getElementById('auth-view');
             const appView = document.getElementById('app-view');
             const btnUsers = document.getElementById('btn-users');
@@ -1607,8 +1668,8 @@
             const btnPayroll = document.getElementById('btn-payroll');
 
             if (currentUser && currentUser.name) {
-                authView.classList.add('hidden');
-                appView.classList.remove('hidden');
+                if (authView) authView.classList.add('hidden');
+                if (appView) appView.classList.remove('hidden');
                 
                 document.getElementById('sidebar-user-name').innerText = currentUser.name;
                 document.getElementById('sidebar-user-role').innerText = currentUser.position || 'พนักงาน';
@@ -1623,11 +1684,10 @@
                 startCamera();
                 listenEmployeesRealtime();
             } else {
-                authView.classList.remove('hidden');
-                appView.classList.add('hidden');
+                if (authView) authView.classList.remove('hidden');
+                if (appView) appView.classList.add('hidden');
             }
         }
     </script>
 </body>
 </html>
-```[cite: 2, 3]
