@@ -64,10 +64,6 @@
                             <input type="password" id="login_pass" placeholder="••••••••" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md">เข้าสู่ระบบ</button>
-                        <div class="bg-blue-50 p-3 rounded-xl text-xs text-blue-800 mt-3 flex justify-between items-center">
-                            <span>💡 เข้าชั่วคราว: <b>admin</b> / <b>1234</b></span>
-                            <button type="button" onclick="resetSystemData()" class="text-red-600 underline font-medium">ล้างข้อมูลระบบ</button>
-                        </div>
                     </form>
                 </div>
 
@@ -149,7 +145,7 @@
                 <div class="flex items-center justify-between pb-3 mb-2 border-b md:hidden">
                     <div class="flex items-center gap-2">
                         <img src="logo.jpg" onerror="this.onerror=null; this.src='1785518472043 - Copy.jpg';" alt="Logo" class="w-7 h-7 rounded-lg object-cover">
-                        <span class="font-bold text-blue-900 text-base">เมนูระบบ</span>
+                        <span class="font-bold text-blue-950 text-base">เมนูระบบ</span>
                     </div>
                     <button type="button" onclick="toggleSidebar(false)" class="p-1 text-gray-500 hover:text-gray-800">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -203,7 +199,6 @@
                     <button type="button" onclick="switchAppTab('expense')" id="btn-expense" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
                         <span class="text-lg">💸</span> <span>รายการรายจ่าย</span>
                     </button>
-                    <!-- เมนูใหม่: สรุป รายรับ-รายจ่าย แบบกราฟ -->
                     <button type="button" onclick="switchAppTab('financial-chart')" id="btn-financial-chart" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
                         <span class="text-lg">📈</span> <span>สรุปรายรับ-รายจ่าย (กราฟ)</span>
                     </button>
@@ -923,7 +918,7 @@
                     </div>
                 </section>
 
-                <!-- 6. ส่วนสรุปรายรับ-รายจ่าย แบบกราฟ (เพิ่มใหม่) -->
+                <!-- 6. ส่วนสรุปรายรับ-รายจ่าย แบบกราฟ -->
                 <section id="section-financial-chart" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-3">
                         <div>
@@ -1134,7 +1129,6 @@
             }
         };
 
-        // ฟังก์ชันคำนวณและแสดงผลกราฟเปรียบเทียบรายรับ-รายจ่าย และยอดภาษี
         function updateFinancialChart() {
             const yearSelect = document.getElementById('chart_filter_year');
             const fromMonthSelect = document.getElementById('chart_filter_from_month');
@@ -1197,7 +1191,6 @@
 
             const netProfit = totalRevSum - totalExpSum;
 
-            // อัปเดตตัวเลขในการ์ดสรุป
             const cardRev = document.getElementById('card_rev_total');
             const cardExp = document.getElementById('card_exp_total');
             const cardProfit = document.getElementById('card_net_profit');
@@ -1213,7 +1206,6 @@
             if (cardVat) cardVat.innerText = `${totalVatExpSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
             if (cardWht) cardWht.innerText = `${totalWhtExpSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
 
-            // วาดกราฟด้วย Chart.js
             const ctx = document.getElementById('financialComparisonChart')?.getContext('2d');
             if (!ctx) return;
 
@@ -1284,7 +1276,6 @@
             });
         }
 
-        // ฟังก์ชันคำนวณ VAT 7% และ ภาษีหัก ณ ที่จ่าย Real-time
         function calculateExpenseTax() {
             const baseAmount = parseFloat(document.getElementById('exp_base_amount')?.value) || 0;
             const vatType = document.getElementById('exp_vat_type')?.value || 'none';
@@ -1649,13 +1640,6 @@
                 if (mediaStream) {
                     mediaStream.getTracks().forEach(track => track.stop());
                 }
-                location.reload();
-            }
-        }
-
-        function resetSystemData() {
-            if (confirm('⚠️ คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลระบบทั้งหมดกลับสู่ค่าเริ่มต้น?')) {
-                localStorage.clear();
                 location.reload();
             }
         }
@@ -3071,3 +3055,4 @@
     </script>
 </body>
 </html>
+```[cite: 2]
