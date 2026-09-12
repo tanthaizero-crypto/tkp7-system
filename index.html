@@ -1129,6 +1129,99 @@
             }
         };
 
+        // ฟังก์ชันย่อขนาดภาพอัตโนมัติก่อนจัดเก็บ ป้องกัน LocalStorage เต็ม
+        function compressAndResizeImage(file, maxWidth, maxHeight, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    callback(compressedBase64);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewImage(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // บีบอัดภาพไม่เกิน 800px และคุณภาพ 0.7
+            compressAndResizeImage(file, 800, 800, 0.7, function(base64) {
+                if (type === 'avatar') {
+                    tempAvatarBase64 = base64;
+                    const prev = document.getElementById('avatar_preview');
+                    const cont = document.getElementById('avatar_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'idcard') {
+                    tempIDCardBase64 = base64;
+                    const prev = document.getElementById('idcard_preview');
+                    const cont = document.getElementById('idcard_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'reimb_bill') {
+                    tempReimbBillBase64 = base64;
+                    const prev = document.getElementById('reimb_bill_preview');
+                    const cont = document.getElementById('reimb_bill_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'mile_start') {
+                    tempMileStartBase64 = base64;
+                    const prev = document.getElementById('mile_start_preview');
+                    const cont = document.getElementById('mile_start_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'mile_end') {
+                    tempMileEndBase64 = base64;
+                    const prev = document.getElementById('mile_end_preview');
+                    const cont = document.getElementById('mile_end_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'bill') {
+                    tempBillBase64 = base64;
+                    const prev = document.getElementById('bill_preview');
+                    const cont = document.getElementById('bill_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'rev_slip') {
+                    tempRevSlipBase64 = base64;
+                    const prev = document.getElementById('rev_slip_preview');
+                    const cont = document.getElementById('rev_slip_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                } else if (type === 'exp_bill') {
+                    tempExpBillBase64 = base64;
+                    const prev = document.getElementById('exp_bill_preview');
+                    const cont = document.getElementById('exp_bill_preview_container');
+                    if (prev) prev.src = base64;
+                    if (cont) cont.classList.remove('hidden');
+                }
+            });
+        }
+
         function updateFinancialChart() {
             const yearSelect = document.getElementById('chart_filter_year');
             const fromMonthSelect = document.getElementById('chart_filter_from_month');
@@ -1601,6 +1694,11 @@
             const phone = document.getElementById('reg_phone').value.trim();
             const pass = document.getElementById('reg_pass').value.trim();
 
+            if (!name || !position || !car || !phone || !pass) {
+                alert('⚠️ กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง');
+                return;
+            }
+
             let employees = JSON.parse(localStorage.getItem('tkp7_employees')) || [];
             if (employees.some(emp => emp.phone === phone)) {
                 alert('⚠️ เบอร์โทรศัพท์นี้ถูกใช้งานในระบบแล้ว');
@@ -1619,10 +1717,16 @@
                 isAdmin: false
             };
 
-            employees.push(newEmployee);
-            localStorage.setItem('tkp7_employees', JSON.stringify(employees));
+            try {
+                employees.push(newEmployee);
+                localStorage.setItem('tkp7_employees', JSON.stringify(employees));
+            } catch (err) {
+                alert('⚠️ พื้นที่จัดเก็บของเบราว์เซอร์เต็ม กรุณาลดขนาดไฟล์ภาพหรือลองใหม่อีกครั้ง');
+                console.error(err);
+                return;
+            }
+
             document.getElementById('formRegister').reset();
-            
             tempAvatarBase64 = "";
             tempIDCardBase64 = "";
             const prevAvatar = document.getElementById('avatar_preview_container');
@@ -1642,50 +1746,6 @@
                 }
                 location.reload();
             }
-        }
-
-        function previewImage(event, type) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64 = e.target.result;
-                if (type === 'avatar') {
-                    tempAvatarBase64 = base64;
-                    document.getElementById('avatar_preview').src = base64;
-                    document.getElementById('avatar_preview_container').classList.remove('hidden');
-                } else if (type === 'idcard') {
-                    tempIDCardBase64 = base64;
-                    document.getElementById('idcard_preview').src = base64;
-                    document.getElementById('idcard_preview_container').classList.remove('hidden');
-                } else if (type === 'reimb_bill') {
-                    tempReimbBillBase64 = base64;
-                    document.getElementById('reimb_bill_preview').src = base64;
-                    document.getElementById('reimb_bill_preview_container').classList.remove('hidden');
-                } else if (type === 'mile_start') {
-                    tempMileStartBase64 = base64;
-                    document.getElementById('mile_start_preview').src = base64;
-                    document.getElementById('mile_start_preview_container').classList.remove('hidden');
-                } else if (type === 'mile_end') {
-                    tempMileEndBase64 = base64;
-                    document.getElementById('mile_end_preview').src = base64;
-                    document.getElementById('mile_end_preview_container').classList.remove('hidden');
-                } else if (type === 'bill') {
-                    tempBillBase64 = base64;
-                    document.getElementById('bill_preview').src = base64;
-                    document.getElementById('bill_preview_container').classList.remove('hidden');
-                } else if (type === 'rev_slip') {
-                    tempRevSlipBase64 = base64;
-                    document.getElementById('rev_slip_preview').src = base64;
-                    document.getElementById('rev_slip_preview_container').classList.remove('hidden');
-                } else if (type === 'exp_bill') {
-                    tempExpBillBase64 = base64;
-                    document.getElementById('exp_bill_preview').src = base64;
-                    document.getElementById('exp_bill_preview_container').classList.remove('hidden');
-                }
-            };
-            reader.readAsDataURL(file);
         }
 
         function getLocation() {
@@ -1725,7 +1785,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.8);
+            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.7);
             if (preview) preview.src = tempFaceBase64;
             if (previewCont) previewCont.classList.remove('hidden');
             if (btnSave) btnSave.classList.remove('hidden');
@@ -3055,4 +3115,3 @@
     </script>
 </body>
 </html>
-```[cite: 2]
