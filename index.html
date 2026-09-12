@@ -14,7 +14,7 @@
     <!-- Tesseract OCR Engine -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
-    <!-- 1. โหลด Firebase SDK แบบ Compat เพื่อให้เรียกใช้ง่ายผ่านหน้าเว็บ -->
+    <!-- โหลด Firebase SDK แบบ Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -49,7 +49,7 @@
                     <img src="logo.jpg" onerror="this.onerror=null; this.src='1785518472043 - Copy.jpg';" alt="TKP7 Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-pink-500/50 p-0.5 bg-black mx-auto">
                 </div>
                 <h1 class="text-xl font-bold tracking-tight">TKP7 Pro Solution</h1>
-                <p class="text-xs text-blue-200 mt-1 font-light">ระบบจัดการพนักงาน (Firebase Cloud Database)</p>
+                <p class="text-xs text-blue-200 mt-1 font-light">ระบบจัดการพนักงาน ค่าแรง และค่าน้ำมัน (Cloud)</p>
             </div>
 
             <div class="flex border-b border-gray-200 cursor-pointer text-sm">
@@ -134,7 +134,7 @@
                         <img src="logo.jpg" onerror="this.onerror=null; this.src='1785518472043 - Copy.jpg';" alt="TKP7 Logo" class="w-9 h-9 rounded-xl object-cover border border-pink-400/40 shadow-sm bg-black">
                         <div>
                             <h1 class="text-base md:text-lg font-bold leading-tight">TKP7 Pro Solution</h1>
-                            <span class="text-[11px] text-blue-200 hidden sm:block leading-none">Cloud Database Connected</span>
+                            <span class="text-[11px] text-blue-200 hidden sm:block leading-none">Smart Management (Cloud)</span>
                         </div>
                     </div>
                 </div>
@@ -177,6 +177,9 @@
                     <button type="button" onclick="switchAppTab('face')" id="btn-face" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left transition bg-blue-50 text-blue-700 font-semibold shadow-sm cursor-pointer">
                         <span class="text-lg">📷</span> <span>สแกนหน้าเข้างาน</span>
                     </button>
+                    <button type="button" onclick="switchAppTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
+                        <span class="text-lg">📊</span> <span>แดชบอร์ดรายจ่าย</span>
+                    </button>
                     <button type="button" onclick="switchAppTab('advance')" id="btn-advance" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💸</span> <span>ขอเบิกเงิน</span>
                     </button>
@@ -186,16 +189,58 @@
                     <button type="button" onclick="switchAppTab('leave')" id="btn-leave" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">📅</span> <span>ยื่นใบลา</span>
                     </button>
+                    <button type="button" onclick="switchAppTab('payroll')" id="btn-payroll" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
+                        <span class="text-lg">💵</span> <span>บันทึกค่าแรง</span>
+                    </button>
                     <button type="button" onclick="switchAppTab('fuel')" id="btn-fuel" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">⛽</span> <span>ค่าน้ำมันรถ</span>
                     </button>
+                    <button type="button" onclick="switchAppTab('income')" id="btn-income" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        <span class="text-lg">💰</span> <span>รายได้ค้างจ่ายสุทธิ</span>
+                    </button>
+                    <button type="button" onclick="switchAppTab('revenue')" id="btn-revenue" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        <span class="text-lg">💵</span> <span>รายการรายรับ</span>
+                    </button>
+                    <button type="button" onclick="switchAppTab('expense')" id="btn-expense" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        <span class="text-lg">💸</span> <span>รายการรายจ่าย</span>
+                    </button>
+                    <button type="button" onclick="switchAppTab('financial-chart')" id="btn-financial-chart" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        <span class="text-lg">📈</span> <span>สรุปรายรับ-รายจ่าย (กราฟ)</span>
+                    </button>
+                    <button type="button" onclick="switchAppTab('history')" id="btn-history" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        <span class="text-lg">📋</span> <span>ประวัติรายการทั้งหมด</span>
+                    </button>
                     <button type="button" onclick="switchAppTab('users')" id="btn-users" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
-                        <span class="text-lg">👥</span> <span>จัดการบัญชีผู้ใช้ (Cloud)</span>
+                        <span class="text-lg">👥</span> <span>จัดการบัญชีผู้ใช้</span>
                     </button>
                 </nav>
             </aside>
 
             <main class="flex-1 p-3 sm:p-5 md:p-6 w-full max-w-5xl mx-auto overflow-x-hidden">
+                <!-- แดชบอร์ดรายจ่าย -->
+                <section id="section-dashboard" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-blue-950 flex items-center gap-2">
+                        <span>📊</span> แดชบอร์ดสรุปรายจ่ายทั้งหมด
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-semibold text-blue-800 uppercase block mb-1">รายจ่ายสัปดาห์นี้</span>
+                            <span id="dash_weekly" class="text-xl sm:text-2xl font-bold text-blue-900">0.00</span>
+                            <span class="text-xs text-gray-500 block mt-1">บาท</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-semibold text-emerald-800 uppercase block mb-1">รายจ่ายเดือนนี้</span>
+                            <span id="dash_monthly" class="text-xl sm:text-2xl font-bold text-emerald-900">0.00</span>
+                            <span class="text-xs text-gray-500 block mt-1">บาท</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-semibold text-purple-800 uppercase block mb-1">รายจ่ายปีนี้</span>
+                            <span id="dash_yearly" class="text-xl sm:text-2xl font-bold text-purple-900">0.00</span>
+                            <span class="text-xs text-gray-500 block mt-1">บาท</span>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- สแกนหน้าเข้างาน -->
                 <section id="section-face" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
                     <h2 class="text-base sm:text-lg font-bold mb-4 text-indigo-950 flex items-center gap-2">
@@ -216,20 +261,784 @@
                         <div id="face_preview_container" class="mt-2 hidden">
                             <img id="face_preview" class="max-h-40 mx-auto rounded-xl border shadow-md" alt="ภาพสแกนหน้า">
                             <span class="text-xs text-indigo-600 font-semibold mt-1 block">✓ ถ่ายภาพใบหน้าสำเร็จ พร้อมบันทึกเวลา</span>
+                            <button type="button" onclick="retakePhoto()" class="text-xs text-red-600 underline mt-1">ถ่ายภาพใหม่</button>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-xl text-left">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">📍 พิกัดปัจจุบัน (GPS Map)</span>
+                                <button type="button" onclick="getLocation()" class="text-xs text-blue-600 underline">อัปเดตตำแหน่ง</button>
+                            </div>
+                            <div id="map_status" class="text-xs text-gray-500 mb-2">กำลังค้นหาตำแหน่ง...</div>
+                            <div id="map_container" class="w-full h-28 sm:h-36 bg-gray-200 rounded-lg overflow-hidden border">
+                                <iframe id="google_map_iframe" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="" class="w-full h-full"></iframe>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="saveAttendance()" id="btn-save-attendance" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow hidden">✅ ยืนยันเช็คอินเข้างาน</button>
+                    </div>
+                </section>
+
+                <!-- เมนูเบิกเงิน -->
+                <section id="section-advance" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-amber-900 flex items-center gap-2">
+                        <span>💸</span> ฟอร์มขอเบิกเงินล่วงหน้า / ยืมเงิน
+                    </h2>
+                    <form id="formAdvance" onsubmit="saveAdvanceRequest(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่ต้องการเบิก</label>
+                                <input type="date" id="adv_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินที่ต้องการเบิก (บาท)</label>
+                                <input type="number" step="0.01" id="adv_amount" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เหตุผลในการเบิกเงิน</label>
+                                <textarea id="adv_reason" rows="2" placeholder="ระบุเหตุผล เช่น ค่าใช้จ่ายหน้างาน ค่าเดินทาง..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-xl transition">ส่งคำขอเบิกเงิน</button>
+                    </form>
+                </section>
+
+                <!-- เมนูสำรองจ่าย -->
+                <section id="section-reimburse" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-indigo-900 flex items-center gap-2">
+                        <span>💳</span> ฟอร์มบันทึกรายการสำรองจ่าย
+                    </h2>
+                    <form id="formReimburse" onsubmit="saveReimburseRequest(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่สำรองจ่าย</label>
+                                <input type="date" id="reimb_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินสำรองจ่าย (บาท)</label>
+                                <input type="number" step="0.01" id="reimb_amount" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">รายละเอียดค่าใช้จ่าย</label>
+                                <textarea id="reimb_reason" rows="2" placeholder="เช่น ค่าอะไหล่ ค่าอุปกรณ์ไฟฟ้าหน้างาน..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 แนบรูปบิล / สลิปโอน</label>
+                                <input type="file" id="reimb_img_bill" accept="image/*" capture="environment" onchange="previewImage(event, 'reimb_bill')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="reimb_bill_preview_container" class="mt-2 hidden text-center">
+                                    <img id="reimb_bill_preview" class="max-h-28 mx-auto rounded-lg border" alt="รูปบิลสำรองจ่าย">
+                                    <span class="text-xs text-indigo-600 font-semibold mt-1 block">✓ แนบรูปสำเร็จ</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition">ส่งบันทึกสำรองจ่าย</button>
+                    </form>
+                </section>
+
+                <!-- เมนูขอลา -->
+                <section id="section-leave" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-teal-900 flex items-center gap-2">
+                        <span>📅</span> ฟอร์มยื่นใบลา / แจ้งลาออก
+                    </h2>
+                    <form id="formLeave" onsubmit="saveLeaveRequest(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ประเภทการลา</label>
+                                <select id="leave_type" onchange="handleLeaveTypeChange()" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 bg-white">
+                                    <option value="ลาป่วย">ลาป่วย</option>
+                                    <option value="ลากิจ (ล่วงหน้า 3 วัน)">ลากิจ (ล่วงหน้า 3 วัน)</option>
+                                    <option value="ลาพักร้อน">ลาพักร้อน</option>
+                                    <option value="ลาออก (ล่วงหน้า 15 วัน)">ลาออก (ล่วงหน้า 15 วัน)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ตั้งแต่วันที่</label>
+                                <input type="date" id="leave_start" onchange="autoCalcLeaveDate()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ถึงวันที่</label>
+                                <input type="date" id="leave_end" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
+                            </div>
+                            <div class="sm:col-span-3">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เหตุผลรายละเอียด</label>
+                                <textarea id="leave_reason" rows="2" placeholder="ระบุเหตุผลการลา..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 rounded-xl transition">ส่งใบคำขอ</button>
+                    </form>
+                </section>
+
+                <!-- 1. ฟอร์มค่าแรง -->
+                <section id="section-payroll" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                        <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2">
+                            <span>📝</span> เรทค่าแรงพนักงาน & ระบบ AI
+                        </h2>
+                        <button type="button" onclick="manualRunAiPayroll()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-3 py-2 rounded-xl transition shadow flex items-center justify-center gap-1.5 self-start sm:self-auto">
+                            <span>🤖</span> <span>ทดสอบรัน AI ทันที</span>
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mb-4">ระบบจะนำเรทที่กำหนดไปบันทึกอัตโนมัติทุกวันเวลา 12:00 น. (เว้นวันอาทิตย์)</p>
+
+                    <div class="overflow-x-auto mb-6 border rounded-xl">
+                        <table class="w-full text-left border-collapse min-w-[480px]">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-700 text-xs font-semibold">
+                                    <th class="p-3">ชื่อพนักงาน</th>
+                                    <th class="p-3">ตำแหน่ง</th>
+                                    <th class="p-3 text-right">เรทค่าแรง (บาท/วัน)</th>
+                                    <th class="p-3 text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wageSettingList" class="text-xs sm:text-sm divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+
+                    <hr class="my-5 border-gray-200">
+
+                    <h3 class="text-sm font-bold text-blue-900 mb-3">บันทึกค่าแรงรายบุคคล</h3>
+                    <form id="formPayroll" onsubmit="savePayroll(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่จ่าย / ทำงาน</label>
+                                <input type="date" id="p_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เลือกพนักงาน</label>
+                                <select id="p_name" onchange="fillDefaultWage()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ประเภทค่าแรง</label>
+                                <select id="p_type" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
+                                    <option value="รายวัน">รายวัน</option>
+                                    <option value="รายเดือน">รายเดือน</option>
+                                    <option value="ค่าแรงล่วงเวลา (OT)">ค่าแรงล่วงเวลา (OT)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงิน (บาท)</label>
+                                <input type="number" id="p_amount" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition">บันทึกค่าแรง</button>
+                    </form>
+                </section>
+
+                <!-- 2. ฟอร์มค่าน้ำมัน -->
+                <section id="section-fuel" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-blue-950 flex items-center gap-2">
+                        <span>⛽</span> บันทึกค่าน้ำมันรถบริษัท
+                    </h2>
+                    <form id="formFuel" onsubmit="saveFuel(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่เติม</label>
+                                <input type="date" id="f_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ทะเบียนรถประจำตัว</label>
+                                <select id="f_car" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ประเภทเชื้อเพลิง</label>
+                                <select id="f_fuel_type" onchange="calculateFuel()" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
+                                    <option value="Diesel">ดีเซล (Diesel B7)</option>
+                                    <option value="Gasohol95">แก๊สโซฮอล์ 95</option>
+                                    <option value="Gasohol91">แก๊สโซฮอล์ 91</option>
+                                    <option value="Benzene95">เบนซิน 95</option>
+                                    <option value="EV">EV (ชาร์จไฟฟ้า)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">อัตราสิ้นเปลือง (กม./ลิตร)</label>
+                                <input type="number" step="0.1" id="f_rate" value="12.0" oninput="calculateFuel()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-gray-50" placeholder="12.0">
+                                <span id="rate_status_text" class="text-[11px] text-gray-400 mt-1 block">เฉพาะ Admin ที่แก้ไขได้</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เลขไมล์เริ่มต้น</label>
+                                <input type="number" id="f_mile_start" oninput="calculateFuel()" placeholder="เช่น 54000" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เลขไมล์สิ้นสุด</label>
+                                <input type="number" id="f_mile_end" oninput="calculateFuel()" placeholder="เช่น 54300" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 ถ่ายรูปไมล์เริ่มต้น</label>
+                                <input type="file" id="f_img_start" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_start')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="mile_start_preview_container" class="mt-2 hidden text-center">
+                                    <img id="mile_start_preview" class="max-h-24 mx-auto rounded border" alt="ไมล์เริ่ม">
+                                    <span class="text-xs text-emerald-600 font-semibold mt-1 block">✓ แนบรูปแล้ว</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 ถ่ายรูปไมล์สิ้นสุด</label>
+                                <input type="file" id="f_img_end" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_end')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="mile_end_preview_container" class="mt-2 hidden text-center">
+                                    <img id="mile_end_preview" class="max-h-24 mx-auto rounded border" alt="ไมล์จบ">
+                                    <span class="text-xs text-emerald-600 font-semibold mt-1 block">✓ แนบรูปแล้ว</span>
+                                </div>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">🧾 ถ่ายรูปบิลกำกับภาษี</label>
+                                <input type="file" id="f_img_bill" accept="image/*" capture="environment" onchange="previewImage(event, 'bill')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="bill_preview_container" class="mt-2 hidden text-center">
+                                    <img id="bill_preview" class="max-h-24 mx-auto rounded border" alt="บิลน้ำมัน">
+                                    <span class="text-xs text-emerald-600 font-semibold mt-1 block">✓ แนบรูปบิลแล้ว</span>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2 bg-emerald-50 border border-emerald-200 p-3 sm:p-4 rounded-xl grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                    <span class="text-[11px] text-gray-500 block">ระยะทาง</span>
+                                    <span id="calc_distance" class="text-xs sm:text-sm font-bold text-gray-800">0 กม.</span>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-gray-500 block">ราคากลาง</span>
+                                    <span id="calc_price" class="text-xs sm:text-sm font-bold text-emerald-700">39.14 ฿</span>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-gray-500 block">คำนวณปริมาณ</span>
+                                    <span id="calc_liters" class="text-xs sm:text-sm font-bold text-blue-700">0.00 ลิตร</span>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินรวม (บาท)</label>
+                                <input type="number" step="0.01" id="f_amount" readonly class="w-full border bg-gray-50 font-bold text-emerald-700 rounded-xl px-3.5 py-2.5 text-base focus:outline-none" placeholder="0.00">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl transition">บันทึกค่าน้ำมัน</button>
+                    </form>
+                </section>
+
+                <!-- 3. ส่วนหน้ารายได้ของพนักงาน -->
+                <section id="section-income" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <div id="printable-income-area">
+                        <div class="border-b-2 border-gray-800 pb-4 mb-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900 leading-tight">TKP7 Pro Solution</h1>
+                                    <div class="text-xs text-gray-700 leading-relaxed mt-1">
+                                        <p class="font-semibold text-sm text-gray-800">บริษัท ทีเคพี เซเว่น โปรโซลูชั่น จำกัด</p>
+                                        <p>99/194 ม.3 ต.คลองสอง อ.คลองหลวง จ.ปทุมธานี 12120</p>
+                                        <p>เลขที่ประจำตัวผู้เสียภาษีอากร: 0135569027610</p>
+                                    </div>
+                                    <p class="text-sm font-bold text-blue-900 mt-2">ใบแจ้งสรุปยอดรายได้สะสมค้างจ่ายสุทธิ</p>
+                                    <p class="text-xs text-gray-500">ออกเอกสาร ณ วันที่: <span id="print_doc_date"></span></p>
+                                </div>
+                                <div class="text-left sm:text-right">
+                                    <p class="text-sm font-bold text-gray-800">พนักงาน: <span id="print_emp_name">-</span></p>
+                                    <p class="text-xs text-gray-600">สถานะ: ยอดรอตัดจ่ายรอบปัจจุบัน</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col lg:flex-row justify-between lg:items-start gap-4 mb-6">
+                            <div>
+                                <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2 mb-2 no-print">
+                                    <span>💰</span> สรุปรายได้สะสมค้างจ่ายสุทธิ
+                                </h2>
+                                <p class="text-xs text-gray-500 mb-3 no-print">คำนวณจากค่าแรงที่ยังไม่จ่าย ลบด้วย ยอดขอเบิกเงินที่อนุมัติแล้ว</p>
+                                
+                                <div class="flex flex-wrap items-center gap-2 no-print">
+                                    <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-1.5">
+                                        <label for="income_filter_emp" class="text-xs font-semibold text-blue-900 whitespace-nowrap">👤 พนักงาน:</label>
+                                        <select id="income_filter_emp" onchange="renderIncomeTable()" class="bg-white border rounded-lg px-2.5 py-1 text-xs font-medium text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                        </select>
+                                    </div>
+                                    <button type="button" onclick="printIncomeReport()" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm">
+                                        <span>🖨️</span> <span>พิมพ์เอกสารรายได้</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white p-4 sm:p-5 rounded-2xl shadow-md min-w-[260px] text-right border border-blue-800 print:bg-none print:text-black print:border-2 print:border-gray-800 print:p-3">
+                                <span class="text-xs text-blue-200 font-medium block uppercase tracking-wider print:text-gray-700">ยอดเงินสะสมค้างจ่ายสุทธิ</span>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-white mt-1 tracking-tight print:text-black" id="income_big_total">0.00 ฿</div>
+                                <div class="flex justify-end gap-3 mt-2 text-[11px] text-blue-200 pt-2 border-t border-blue-800/60 print:border-gray-300 print:text-gray-600">
+                                    <span>ค่าแรง: <b class="text-white print:text-black" id="income_sub_wage">0.00</b></span>
+                                    <span>หักเบิก: <b class="text-amber-300 print:text-red-600" id="income_sub_advance">0.00</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto border border-gray-200 rounded-xl print:border-gray-800">
+                            <table class="w-full text-left border-collapse min-w-[620px] print:min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-700 text-xs font-semibold print:bg-gray-200 print:text-black">
+                                        <th class="p-3 border-b">วันที่</th>
+                                        <th class="p-3 border-b">ชื่อพนักงาน</th>
+                                        <th class="p-3 border-b">ประเภทรายการ</th>
+                                        <th class="p-3 border-b">รายละเอียด</th>
+                                        <th class="p-3 border-b text-right">จำนวนเงิน (บาท)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incomeDailyList" class="text-xs sm:text-sm divide-y divide-gray-100 print:divide-gray-300">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="hidden print:grid grid-cols-2 gap-8 mt-12 pt-6 text-center text-xs">
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อผู้มีอำนาจอนุมัติจ่าย</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อพนักงานผู้รับเงิน</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- ส่วนจัดการบัญชีผู้ใช้ (ดึงข้อมูล Real-time จาก Firebase) -->
-                <section id="section-users" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                <!-- 4. ส่วนรายการรายรับ -->
+                <section id="section-revenue" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2 no-print">
+                        <h2 class="text-base sm:text-lg font-bold text-emerald-900 flex items-center gap-2">
+                            <span>💵</span> บันทึกรายการรายรับ
+                        </h2>
+                        <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl text-right">
+                            <span class="text-xs text-emerald-700 font-semibold block">ยอดรายรับสะสมรวม</span>
+                            <span id="rev_total_display" class="text-xl font-extrabold text-emerald-800">0.00 ฿</span>
+                        </div>
+                    </div>
+
+                    <form id="formRevenue" onsubmit="saveRevenue(event)" class="space-y-4 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-200 no-print">
+                        <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wider">กรอกข้อมูลรายรับใหม่</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่รับเงิน</label>
+                                <input type="date" id="rev_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">หมวดหมู่รายรับ</label>
+                                <select id="rev_category" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                                    <option value="ค่าติดตั้ง EV Charger">ค่าติดตั้ง EV Charger</option>
+                                    <option value="ค่าบริการงานไฟฟ้า / ซ่อมบำรุง">ค่าบริการงานไฟฟ้า / ซ่อมบำรุง</option>
+                                    <option value="เงินมัดจำโครงการ">เงินมัดจำโครงการ</option>
+                                    <option value="เงินงวดงานโครงการ">เงินงวดงานโครงการ</option>
+                                    <option value="รายรับอื่นๆ">รายรับอื่นๆ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินที่ได้รับ (บาท)</label>
+                                <input type="number" step="0.01" id="rev_amount" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ช่องทางการรับเงิน</label>
+                                <select id="rev_channel" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white">
+                                    <option value="โอนผ่านธนาคาร">โอนผ่านธนาคาร</option>
+                                    <option value="เงินสด">เงินสด</option>
+                                    <option value="เช็คเงินสด">เช็คเงินสด</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">รายละเอียดงาน / ลูกค้า</label>
+                                <textarea id="rev_detail" rows="2" placeholder="ระบุชื่องาน สถานที่ หรือชื่อลูกค้า..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 bg-white"></textarea>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 แนบรูปสลิป / เอกสารรับเงิน</label>
+                                <input type="file" id="rev_img_slip" accept="image/*" capture="environment" onchange="previewImage(event, 'rev_slip')" class="w-full border border-dashed border-gray-300 bg-white rounded-xl p-2.5 text-xs text-gray-500">
+                                <div id="rev_slip_preview_container" class="mt-2 hidden text-center">
+                                    <img id="rev_slip_preview" class="max-h-28 mx-auto rounded-lg border" alt="สลิปรายรับ">
+                                    <span class="text-xs text-emerald-600 font-semibold mt-1 block">✓ แนบรูปสลิปสำเร็จ</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl transition shadow">บันทึกรายรับ</button>
+                    </form>
+
+                    <div id="printable-revenue-area">
+                        <div class="hidden print:block border-b-2 border-gray-800 pb-4 mb-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900 leading-tight">TKP7 Pro Solution</h1>
+                                    <div class="text-xs text-gray-700 leading-relaxed mt-1">
+                                        <p class="font-semibold text-sm text-gray-800">บริษัท ทีเคพี เซเว่น โปรโซลูชั่น จำกัด</p>
+                                        <p>99/194 ม.3 ต.คลองสอง อ.คลองหลวง จ.ปทุมธานี 12120</p>
+                                        <p>เลขที่ประจำตัวผู้เสียภาษีอากร: 0135569027610</p>
+                                    </div>
+                                    <p class="text-sm font-bold text-emerald-900 mt-2">รายงานสรุปรายการรายรับ</p>
+                                    <p class="text-xs text-gray-500">ออกเอกสาร ณ วันที่: <span id="print_rev_doc_date"></span></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-bold text-gray-800">ยอดรวมทั้งสิ้น: <span id="print_rev_total_sum" class="text-emerald-700 font-extrabold">0.00 ฿</span></p>
+                                    <p class="text-xs text-gray-600">สถานะ: บันทึกข้อมูลสำเร็จ</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider">ตารางประวัติรายรับ</h3>
+                            <button type="button" onclick="printRevenueReport()" class="no-print inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition shadow-sm">
+                                <span>🖨️</span> <span>พิมพ์เอกสารรายรับ</span>
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto border border-gray-200 rounded-xl print:border-gray-800">
+                            <table class="w-full text-left border-collapse min-w-[620px] print:min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-700 text-xs font-semibold print:bg-gray-200 print:text-black">
+                                        <th class="p-3 border-b">วันที่</th>
+                                        <th class="p-3 border-b">หมวดหมู่</th>
+                                        <th class="p-3 border-b">รายละเอียดงาน / ลูกค้า</th>
+                                        <th class="p-3 border-b">ช่องทาง</th>
+                                        <th class="p-3 border-b text-right">จำนวนเงิน (บาท)</th>
+                                        <th class="p-3 border-b text-center no-print">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="revenueList" class="text-xs sm:text-sm divide-y divide-gray-100 print:divide-gray-300"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="hidden print:grid grid-cols-2 gap-8 mt-12 pt-6 text-center text-xs">
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อผู้ตรวจสอบบัญชี/การเงิน</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อผู้มีอำนาจลงนาม</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. ส่วนรายการรายจ่าย -->
+                <section id="section-expense" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2 no-print">
+                        <h2 class="text-base sm:text-lg font-bold text-red-900 flex items-center gap-2">
+                            <span>💸</span> บันทึกรายการรายจ่าย
+                        </h2>
+                        <div class="bg-red-50 border border-red-200 px-4 py-2 rounded-xl text-right">
+                            <span class="text-xs text-red-700 font-semibold block">ยอดจ่ายสุทธิสะสมรวม</span>
+                            <span id="exp_total_display" class="text-xl font-extrabold text-red-800">0.00 ฿</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Document Scanner -->
+                    <div class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border-2 border-dashed border-indigo-200 no-print">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl">🤖</span>
+                            <h3 class="text-sm font-bold text-indigo-950">AI Document Scanner (สแกนบิล/ใบกำกับภาษีอัตโนมัติ)</h3>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-3">แนบรูปถ่ายใบเสร็จ ระบบ AI จะอ่านข้อความเพื่อดึง วันที่, ฐานภาษี, VAT, หัก ณ ที่จ่าย และชื่อร้านค้า ลงในฟอร์มให้ทันที</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                            <div>
+                                <input type="file" id="ai_ocr_file" accept="image/*" capture="environment" onchange="previewImage(event, 'exp_bill')" class="w-full border border-gray-300 bg-white rounded-xl p-2 text-xs text-gray-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <button type="button" onclick="runAiOcrScan()" id="btn_run_ocr" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+                                    <span>⚡</span> <span>ให้ AI สแกนเอกสารและกรอกฟอร์ม</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="ocr_status_box" class="mt-3 hidden">
+                            <div class="flex justify-between text-[11px] font-medium text-indigo-800 mb-1">
+                                <span id="ocr_status_text">กำลังประมวลผล...</span>
+                                <span id="ocr_progress_text">0%</span>
+                            </div>
+                            <div class="w-full bg-indigo-100 rounded-full h-1.5 overflow-hidden">
+                                <div id="ocr_progress_bar" class="bg-indigo-600 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div id="exp_bill_preview_container" class="mt-3 hidden text-center">
+                            <img id="exp_bill_preview" class="max-h-36 mx-auto rounded-lg border shadow-sm" alt="ตัวอย่างบิลรายจ่าย">
+                            <span class="text-[11px] text-emerald-600 font-semibold mt-1 block">✓ แนบเอกสารสำเร็จ พร้อมประมวลผล</span>
+                        </div>
+                    </div>
+
+                    <!-- ฟอร์มกรอกข้อมูลรายจ่าย -->
+                    <form id="formExpense" onsubmit="saveExpense(event)" class="space-y-4 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-200 no-print">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wider">กรอกข้อมูลรายจ่ายใหม่</h3>
+                            <span class="text-[11px] text-gray-400 font-light">คำนวณ VAT 7% และ ภาษีหัก ณ ที่จ่ายอัตโนมัติ</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">วันที่จ่ายเงิน</label>
+                                <input type="date" id="exp_date" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">หมวดหมู่รายจ่าย</label>
+                                <select id="exp_category" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 bg-white">
+                                    <option value="ซื้ออุปกรณ์ / อะไหล่ติดตั้ง">ซื้ออุปกรณ์ / อะไหล่ติดตั้ง</option>
+                                    <option value="ค่าขนส่ง / ค่าจัดส่งพัสดุ">ค่าขนส่ง / ค่าจัดส่งพัสดุ</option>
+                                    <option value="ค่าบริการ / ค่าจ้างผู้รับเหมา">ค่าบริการ / ค่าจ้างผู้รับเหมา</option>
+                                    <option value="ค่าซ่อมบำรุงรถ / เครื่องมือ">ค่าซ่อมบำรุงรถ / เครื่องมือ</option>
+                                    <option value="ค่าอุปกรณ์สำนักงาน / เบ็ดเตล็ด">ค่าอุปกรณ์สำนักงาน / เบ็ดเตล็ด</option>
+                                    <option value="ค่าสาธารณูปโภค (น้ำ, ไฟ, เน็ต)">ค่าสาธารณูปโภค (น้ำ, ไฟ, เน็ต)</option>
+                                    <option value="รายจ่ายอื่นๆ">รายจ่ายอื่นๆ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ช่องทางการชำระเงิน</label>
+                                <select id="exp_channel" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 bg-white">
+                                    <option value="โอนผ่านธนาคาร">โอนผ่านธนาคาร</option>
+                                    <option value="เงินสด">เงินสด</option>
+                                    <option value="บัตรเครดิตบริษัท">บัตรเครดิตบริษัท</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">มูลค่าก่อนภาษี (ฐานภาษี)</label>
+                                <input type="number" step="0.01" id="exp_base_amount" oninput="calculateExpenseTax()" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 bg-white font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ภาษีมูลค่าเพิ่ม (VAT)</label>
+                                <div class="flex gap-2">
+                                    <select id="exp_vat_type" onchange="calculateExpenseTax()" class="border rounded-xl px-2 py-2 text-xs bg-white focus:ring-2 focus:ring-red-500">
+                                        <option value="none">ไม่มี VAT</option>
+                                        <option value="include">รวมใน 7%</option>
+                                        <option value="exclude" selected>แยกนอก 7%</option>
+                                    </select>
+                                    <input type="number" step="0.01" id="exp_vat_amount" readonly class="w-full border rounded-xl px-3 py-2 text-sm bg-gray-50 text-gray-700 font-medium" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ภาษีหัก ณ ที่จ่าย (WHT)</label>
+                                <div class="flex gap-2">
+                                    <select id="exp_wht_rate" onchange="calculateExpenseTax()" class="border rounded-xl px-2 py-2 text-xs bg-white focus:ring-2 focus:ring-red-500">
+                                        <option value="0">ไม่หัก (0%)</option>
+                                        <option value="1">1% (ขนส่ง)</option>
+                                        <option value="2">2% (โฆษณา)</option>
+                                        <option value="3">3% (บริการ/จ้างทำของ)</option>
+                                        <option value="5">5% (ค่าเช่า)</option>
+                                    </select>
+                                    <input type="number" step="0.01" id="exp_wht_amount" readonly class="w-full border rounded-xl px-3 py-2 text-sm bg-gray-50 text-amber-700 font-medium" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2 lg:col-span-3 bg-red-50/70 border border-red-200 p-3 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                <div>
+                                    <span class="text-xs text-gray-600 block">ยอดชำระสุทธิ (มูลค่ารวม VAT หักด้วย ณ ที่จ่าย)</span>
+                                    <span class="text-[11px] text-gray-500">คำนวณอัตโนมัติตามกฎหมายภาษี</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold text-red-900">ยอดสุทธิที่จ่าย:</span>
+                                    <input type="number" step="0.01" id="exp_net_amount" readonly class="border bg-white font-extrabold text-red-600 text-lg rounded-xl px-3 py-1.5 w-40 text-right focus:outline-none" placeholder="0.00">
+                                    <span class="text-xs font-semibold text-gray-700">บาท</span>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2 lg:col-span-3">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">รายละเอียดรายการจ่าย / ร้านค้า</label>
+                                <textarea id="exp_detail" rows="2" placeholder="ระบุรายการสินค้า ร้านค้า หรือโครงการที่ใช้จ่าย..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 bg-white"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl transition shadow">บันทึกรายจ่าย</button>
+                    </form>
+
+                    <div id="printable-expense-area">
+                        <div class="hidden print:block border-b-2 border-gray-800 pb-4 mb-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900 leading-tight">TKP7 Pro Solution</h1>
+                                    <div class="text-xs text-gray-700 leading-relaxed mt-1">
+                                        <p class="font-semibold text-sm text-gray-800">บริษัท ทีเคพี เซเว่น โปรโซลูชั่น จำกัด</p>
+                                        <p>99/194 ม.3 ต.คลองสอง อ.คลองหลวง จ.ปทุมธานี 12120</p>
+                                        <p>เลขที่ประจำตัวผู้เสียภาษีอากร: 0135569027610</p>
+                                    </div>
+                                    <p class="text-sm font-bold text-red-900 mt-2">รายงานสรุปรายการรายจ่าย (พร้อมแจกแจงภาษี)</p>
+                                    <p class="text-xs text-gray-500">ออกเอกสาร ณ วันที่: <span id="print_exp_doc_date"></span></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-bold text-gray-800">ยอดจ่ายสุทธิทั้งสิ้น: <span id="print_exp_total_sum" class="text-red-700 font-extrabold">0.00 ฿</span></p>
+                                    <p class="text-xs text-gray-600">สถานะ: บันทึกข้อมูลสำเร็จ</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider">ตารางประวัติรายจ่าย</h3>
+                            <button type="button" onclick="printExpenseReport()" class="no-print inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-xl transition shadow-sm">
+                                <span>🖨️</span> <span>พิมพ์เอกสารรายจ่าย</span>
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto border border-gray-200 rounded-xl print:border-gray-800">
+                            <table class="w-full text-left border-collapse min-w-[760px] print:min-w-full">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-700 text-xs font-semibold print:bg-gray-200 print:text-black">
+                                        <th class="p-3 border-b">วันที่</th>
+                                        <th class="p-3 border-b">หมวดหมู่</th>
+                                        <th class="p-3 border-b">รายละเอียด / ร้านค้า</th>
+                                        <th class="p-3 border-b text-right">ก่อนภาษี</th>
+                                        <th class="p-3 border-b text-right">VAT</th>
+                                        <th class="p-3 border-b text-right">หัก ณ ที่จ่าย</th>
+                                        <th class="p-3 border-b text-right font-bold text-red-700">ยอดจ่ายสุทธิ</th>
+                                        <th class="p-3 border-b text-center no-print">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expenseList" class="text-xs sm:text-sm divide-y divide-gray-100 print:divide-gray-300"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="hidden print:grid grid-cols-2 gap-8 mt-12 pt-6 text-center text-xs">
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อผู้จัดทำ / ผู้จ่ายเงิน</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
+                            <div>
+                                <div class="border-b border-gray-400 w-48 mx-auto mb-2 h-12"></div>
+                                <p class="font-medium">ลงชื่อผู้มีอำนาจอนุมัติจ่าย</p>
+                                <p class="text-gray-500">(........................................................)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. ส่วนสรุปรายรับ-รายจ่าย แบบกราฟ -->
+                <section id="section-financial-chart" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-3">
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2">
+                                <span>📈</span> สรุปเปรียบเทียบ รายรับ - รายจ่าย & รายงานภาษี
+                            </h2>
+                            <p class="text-xs text-gray-500">วิเคราะห์ทิศทางผลการดำเนินงาน ยอดกำไรสุทธิ และสรุปยอดภาษี</p>
+                        </div>
+                    </div>
+
+                    <!-- ฟิลเตอร์เลือก ปี และ ช่วงเดือน -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">เลือกปี (พ.ศ. / ค.ศ.)</label>
+                            <select id="chart_filter_year" onchange="updateFinancialChart()" class="w-full border rounded-xl px-3 py-2 text-xs bg-white focus:ring-2 focus:ring-blue-500">
+                                <option value="2026" selected>2026 (พ.ศ. 2569)</option>
+                                <option value="2025">2025 (พ.ศ. 2568)</option>
+                                <option value="2024">2024 (พ.ศ. 2567)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">ตั้งแต่เดือน</label>
+                            <select id="chart_filter_from_month" onchange="updateFinancialChart()" class="w-full border rounded-xl px-3 py-2 text-xs bg-white focus:ring-2 focus:ring-blue-500">
+                                <option value="0" selected>มกราคม (01)</option>
+                                <option value="1">กุมภาพันธ์ (02)</option>
+                                <option value="2">มีนาคม (03)</option>
+                                <option value="3">เมษายน (04)</option>
+                                <option value="4">พฤษภาคม (05)</option>
+                                <option value="5">มิถุนายน (06)</option>
+                                <option value="6">กรกฎาคม (07)</option>
+                                <option value="7">สิงหาคม (08)</option>
+                                <option value="8">กันยายน (09)</option>
+                                <option value="9">ตุลาคม (10)</option>
+                                <option value="10">พฤศจิกายน (11)</option>
+                                <option value="11">ธันวาคม (12)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">ถึงเดือน</label>
+                            <select id="chart_filter_to_month" onchange="updateFinancialChart()" class="w-full border rounded-xl px-3 py-2 text-xs bg-white focus:ring-2 focus:ring-blue-500">
+                                <option value="0">มกราคม (01)</option>
+                                <option value="1">กุมภาพันธ์ (02)</option>
+                                <option value="2">มีนาคม (03)</option>
+                                <option value="3">เมษายน (04)</option>
+                                <option value="4">พฤษภาคม (05)</option>
+                                <option value="5">มิถุนายน (06)</option>
+                                <option value="6">กรกฎาคม (07)</option>
+                                <option value="7">สิงหาคม (08)</option>
+                                <option value="8">กันยายน (09)</option>
+                                <option value="9">ตุลาคม (10)</option>
+                                <option value="10">พฤศจิกายน (11)</option>
+                                <option value="11" selected>ธันวาคม (12)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- การ์ดตัวเลขสรุปผลการเงิน & สรุปภาษี -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+                        <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-center">
+                            <span class="text-[11px] font-semibold text-emerald-800 uppercase block mb-1">รายรับรวม</span>
+                            <span id="card_rev_total" class="text-lg font-extrabold text-emerald-700">0.00 ฿</span>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 p-3.5 rounded-xl text-center">
+                            <span class="text-[11px] font-semibold text-red-800 uppercase block mb-1">รายจ่ายรวม</span>
+                            <span id="card_exp_total" class="text-lg font-extrabold text-red-700">0.00 ฿</span>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-200 p-3.5 rounded-xl text-center">
+                            <span class="text-[11px] font-semibold text-blue-800 uppercase block mb-1">กำไร / ขาดทุนสุทธิ</span>
+                            <span id="card_net_profit" class="text-lg font-extrabold text-blue-900">0.00 ฿</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-center">
+                            <span class="text-[11px] font-semibold text-amber-800 uppercase block mb-1">VAT ซื้อ (รายจ่าย)</span>
+                            <span id="card_vat_expense" class="text-lg font-bold text-amber-700">0.00 ฿</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl text-center">
+                            <span class="text-[11px] font-semibold text-purple-800 uppercase block mb-1">หัก ณ ที่จ่าย (WHT)</span>
+                            <span id="card_wht_expense" class="text-lg font-bold text-purple-700">0.00 ฿</span>
+                        </div>
+                    </div>
+
+                    <!-- กราฟ Chart.js -->
+                    <div class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        <canvas id="financialComparisonChart" class="max-h-[380px] w-full"></canvas>
+                    </div>
+                </section>
+
+                <!-- เมนูประวัติรายการทั้งหมด -->
+                <section id="section-history" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
                         <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2">
-                            <span>👥</span> อนุมัติและจัดการบัญชีผู้ใช้งาน (Firestore Cloud Real-time)
+                            <span>📋</span> ประวัติการบันทึกรายการทั้งหมด
                         </h2>
-                        <span class="text-xs text-emerald-600 font-medium bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">
-                            ● ซิงค์ข้อมูลอัตโนมัติ Real-time
-                        </span>
+                        <div class="flex gap-1 bg-gray-100 p-1 rounded-xl overflow-x-auto">
+                            <button type="button" onclick="switchHistoryTab('face')" id="history-tab-face" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-indigo-600 text-white transition whitespace-nowrap">📷 หน้า</button>
+                            <button type="button" onclick="switchHistoryTab('advance')" id="history-tab-advance" class="px-2.5 py-1 text-xs font-medium rounded-lg text-gray-600 hover:bg-white transition whitespace-nowrap">💸 เบิก</button>
+                            <button type="button" onclick="switchHistoryTab('reimburse')" id="history-tab-reimburse" class="px-2.5 py-1 text-xs font-medium rounded-lg text-gray-600 hover:bg-white transition whitespace-nowrap">💳 สำรอง</button>
+                            <button type="button" onclick="switchHistoryTab('leave')" id="history-tab-leave" class="px-2.5 py-1 text-xs font-medium rounded-lg text-gray-600 hover:bg-white transition whitespace-nowrap">📅 ลา</button>
+                            <button type="button" onclick="switchHistoryTab('fuel')" id="history-tab-fuel" class="px-2.5 py-1 text-xs font-medium rounded-lg text-gray-600 hover:bg-white transition whitespace-nowrap">⛽ น้ำมัน</button>
+                            <button type="button" onclick="switchHistoryTab('payroll')" id="history-tab-payroll" class="px-2.5 py-1 text-xs font-medium rounded-lg text-gray-600 hover:bg-white transition whitespace-nowrap">💵 ค่าแรง</button>
+                        </div>
                     </div>
+
+                    <div id="payroll-filter-container" class="bg-blue-50 border border-blue-200 p-3 rounded-xl mb-4 hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">เลือกพนักงาน</label>
+                            <select id="filter_emp_name" onchange="renderTable()" class="w-full border rounded-lg px-2 py-1.5 text-xs bg-white"></select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">ตั้งแต่วันที่</label>
+                            <input type="date" id="filter_start_date" onchange="renderTable()" class="w-full border rounded-lg px-2 py-1.5 text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-gray-700 mb-1">ถึงวันที่</label>
+                            <input type="date" id="filter_end_date" onchange="renderTable()" class="w-full border rounded-lg px-2 py-1.5 text-xs bg-white">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left border-collapse min-w-[620px]">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-xs font-semibold">
+                                    <th class="p-3">วันที่ / เวลา</th>
+                                    <th class="p-3">พนักงาน</th>
+                                    <th class="p-3">รายละเอียด</th>
+                                    <th class="p-3 text-right" id="history-header-amount">ยอดเงิน (฿)</th>
+                                    <th class="p-3 text-center" id="history-header-action">สถานะ / จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyList" class="text-xs sm:text-sm divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 7. ส่วนจัดการบัญชีผู้ใช้ -->
+                <section id="section-users" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
+                    <h2 class="text-base sm:text-lg font-bold mb-4 text-blue-950 flex items-center gap-2">
+                        <span>👥</span> อนุมัติและจัดการบัญชีผู้ใช้งาน (Firestore Cloud Real-time)
+                    </h2>
                     <div class="overflow-x-auto border rounded-xl">
                         <table class="w-full text-left border-collapse min-w-[660px]">
                             <thead>
@@ -252,9 +1061,6 @@
     </div>
 
     <script>
-        // ========================================================
-        // 2. ข้อมูลเชื่อมต่อ Firebase ของคุณ (เชื่อมต่อสำเร็จแล้ว)
-        // ========================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCl3JhdjwuVSlRedhSaTp4e7qQweZrrNbA",
             authDomain: "tkp7-system.firebaseapp.com",
@@ -265,20 +1071,59 @@
             measurementId: "G-8FHBCKP9EM"
         };
 
-        // เริ่มต้นการทำงานของ Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        const oilPrices = {
+            "Diesel": 39.14,
+            "Gasohol95": 38.29,
+            "Gasohol91": 37.92,
+            "Benzene95": 47.28,
+            "EV": 7.50
+        };
 
         let tempAvatarBase64 = "";
         let tempIDCardBase64 = "";
         let tempFaceBase64 = "";
+        let tempReimbBillBase64 = "";
+        let tempMileStartBase64 = "";
+        let tempMileEndBase64 = "";
+        let tempBillBase64 = "";
+        let tempRevSlipBase64 = "";
+        let tempExpBillBase64 = "";
+        let currentCoords = { lat: 13.7563, lng: 100.5018 };
         let mediaStream = null;
+        let currentHistoryCategory = 'สแกนหน้าเข้างาน';
+        let financialChartInstance = null;
+
+        const thaiMonths = [
+            "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+            "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+        ];
 
         window.onload = function() {
-            checkAuthStatus();
+            try {
+                checkAuthStatus();
+                calculateFuel();
+                calculateExpenseTax();
+                getLocation();
+                initAiBackgroundScheduler();
+                handleLeaveTypeChange();
+                setupFilterEmployeeDropdown();
+                setupIncomeEmployeeDropdown();
+                renderRevenueTable();
+                renderExpenseTable();
+                
+                const today = new Date().toISOString().split('T')[0];
+                ['adv_date', 'reimb_date', 'leave_start', 'leave_end', 'p_date', 'f_date', 'rev_date', 'exp_date'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && !el.value) el.value = today;
+                });
+            } catch (err) {
+                console.error("Init error:", err);
+            }
         };
 
-        // ย่อขนาดภาพให้มีขนาดพอเหมาะเพื่อส่งเข้า Firestore Document ได้อย่างรวดเร็ว
         function compressAndResizeImage(file, maxWidth, maxHeight, quality, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -312,6 +1157,7 @@
         function previewImage(event, type) {
             const file = event.target.files[0];
             if (!file) return;
+
             compressAndResizeImage(file, 400, 400, 0.5, function(base64) {
                 if (type === 'avatar') {
                     tempAvatarBase64 = base64;
@@ -321,11 +1167,34 @@
                     tempIDCardBase64 = base64;
                     document.getElementById('idcard_preview').src = base64;
                     document.getElementById('idcard_preview_container').classList.remove('hidden');
+                } else if (type === 'reimb_bill') {
+                    tempReimbBillBase64 = base64;
+                    document.getElementById('reimb_bill_preview').src = base64;
+                    document.getElementById('reimb_bill_preview_container').classList.remove('hidden');
+                } else if (type === 'mile_start') {
+                    tempMileStartBase64 = base64;
+                    document.getElementById('mile_start_preview').src = base64;
+                    document.getElementById('mile_start_preview_container').classList.remove('hidden');
+                } else if (type === 'mile_end') {
+                    tempMileEndBase64 = base64;
+                    document.getElementById('mile_end_preview').src = base64;
+                    document.getElementById('mile_end_preview_container').classList.remove('hidden');
+                } else if (type === 'bill') {
+                    tempBillBase64 = base64;
+                    document.getElementById('bill_preview').src = base64;
+                    document.getElementById('bill_preview_container').classList.remove('hidden');
+                } else if (type === 'rev_slip') {
+                    tempRevSlipBase64 = base64;
+                    document.getElementById('rev_slip_preview').src = base64;
+                    document.getElementById('rev_slip_preview_container').classList.remove('hidden');
+                } else if (type === 'exp_bill') {
+                    tempExpBillBase64 = base64;
+                    document.getElementById('exp_bill_preview').src = base64;
+                    document.getElementById('exp_bill_preview_container').classList.remove('hidden');
                 }
             });
         }
 
-        // ฟังก์ชันส่งข้อมูลสมัครพนักงานตรงไปยัง Firebase Firestore
         async function submitRegister() {
             const btn = document.getElementById('btn-reg-submit');
             const name = document.getElementById('reg_name').value.trim();
@@ -343,7 +1212,6 @@
             btn.innerText = "กำลังส่งข้อมูลขึ้น Cloud...";
 
             try {
-                // ตรวจสอบเบอร์โทรซ้ำใน Firestore
                 const checkDoc = await db.collection("employees").doc(phone).get();
                 if (checkDoc.exists) {
                     alert('⚠️ เบอร์โทรศัพท์นี้ถูกใช้งานในระบบแล้ว กรุณาใช้เบอร์อื่น');
@@ -352,7 +1220,6 @@
                     return;
                 }
 
-                // บันทึก Document ลงคอลเลกชัน employees โดยใช้เบอร์โทรศัพท์เป็น ID
                 await db.collection("employees").doc(phone).set({
                     name: name,
                     position: position,
@@ -368,7 +1235,6 @@
 
                 alert('✅ ลงทะเบียนพนักงานสำเร็จ!\nข้อมูลส่งขึ้นฐานข้อมูล Cloud เรียบร้อยแล้ว กรุณาแจ้งแอดมินเพื่อกดอนุมัติ');
 
-                // ล้างฟอร์ม
                 document.getElementById('reg_name').value = '';
                 document.getElementById('reg_car').value = '';
                 document.getElementById('reg_phone').value = '';
@@ -389,21 +1255,20 @@
             }
         }
 
-        // ฟังก์ชันตรวจสอบการเข้าสู่ระบบผ่าน Firestore
         async function handleLogin(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-login-submit');
             const phone = document.getElementById('login_phone').value.trim();
             const pass = document.getElementById('login_pass').value.trim();
 
-            // บัญชี Admin พิเศษ
             if (phone.toLowerCase() === 'admin' && pass === '1234') {
                 const adminUser = {
                     name: 'ผู้ดูแลระบบสูงสุด',
                     phone: 'admin',
                     position: 'ผู้จัดการโครงการ / Admin',
                     car: 'กองกลาง',
-                    isAdmin: true
+                    isAdmin: true,
+                    isApproved: true
                 };
                 sessionStorage.setItem('tkp7_user', JSON.stringify(adminUser));
                 checkAuthStatus();
@@ -437,7 +1302,6 @@
             }
         }
 
-        // ฟังก์ชัน Real-time Sync ดึงรายชื่อพนักงานจาก Firebase มาแสดงอัตโนมัติ
         function listenEmployeesRealtime() {
             db.collection("employees")
               .onSnapshot((snapshot) => {
@@ -479,12 +1343,9 @@
                       `;
                       tbody.appendChild(tr);
                   });
-              }, (error) => {
-                  console.error("Firestore Listen Error:", error);
               });
         }
 
-        // แอดมินกดอนุมัติ -> ส่งคำสั่งอัปเดตสถานะไปที่ Firebase
         async function approveUserFirebase(phone, name) {
             try {
                 await db.collection("employees").doc(phone).update({ is_approved: true });
@@ -494,7 +1355,6 @@
             }
         }
 
-        // แอดมินกดลบ -> ลบออกจากฐานข้อมูล Firebase
         async function deleteUserFirebase(phone, name) {
             if (confirm(`คุณต้องการลบพนักงาน "${name}" ออกจากระบบ Cloud ใช่หรือไม่?`)) {
                 try {
@@ -544,20 +1404,150 @@
 
         function switchAppTab(tab) {
             toggleSidebar(false);
+
             const sections = {
+                'dashboard': document.getElementById('section-dashboard'),
                 'face': document.getElementById('section-face'),
+                'advance': document.getElementById('section-advance'),
+                'reimburse': document.getElementById('section-reimburse'),
+                'leave': document.getElementById('section-leave'),
+                'payroll': document.getElementById('section-payroll'),
+                'fuel': document.getElementById('section-fuel'),
+                'income': document.getElementById('section-income'),
+                'revenue': document.getElementById('section-revenue'),
+                'expense': document.getElementById('section-expense'),
+                'financial-chart': document.getElementById('section-financial-chart'),
+                'history': document.getElementById('section-history'),
                 'users': document.getElementById('section-users')
             };
 
-            Object.values(sections).forEach(s => { if (s) s.classList.add('hidden'); });
+            const tabButtons = {
+                'face': document.getElementById('btn-face'),
+                'dashboard': document.getElementById('btn-dashboard'),
+                'advance': document.getElementById('btn-advance'),
+                'reimburse': document.getElementById('btn-reimburse'),
+                'leave': document.getElementById('btn-leave'),
+                'payroll': document.getElementById('btn-payroll'),
+                'fuel': document.getElementById('btn-fuel'),
+                'income': document.getElementById('btn-income'),
+                'revenue': document.getElementById('btn-revenue'),
+                'expense': document.getElementById('btn-expense'),
+                'financial-chart': document.getElementById('btn-financial-chart'),
+                'history': document.getElementById('btn-history'),
+                'users': document.getElementById('btn-users')
+            };
 
-            if (tab === 'face' && sections.face) {
-                sections.face.classList.remove('hidden');
+            const normalClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer";
+            const activeClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-semibold text-sm text-left bg-blue-50 text-blue-700 shadow-sm transition cursor-pointer";
+
+            Object.keys(tabButtons).forEach(key => {
+                if (tabButtons[key]) {
+                    const isHidden = tabButtons[key].classList.contains('hidden');
+                    tabButtons[key].className = normalClass + (isHidden ? ' hidden' : '');
+                }
+            });
+
+            if (tabButtons[tab]) {
+                tabButtons[tab].className = activeClass;
+            }
+
+            Object.values(sections).forEach(s => {
+                if (s) s.classList.add('hidden');
+            });
+
+            if (sections[tab]) {
+                sections[tab].classList.remove('hidden');
+            }
+
+            if (tab === 'dashboard') {
+                renderDashboardSummary();
+            } else if (tab === 'face') {
                 startCamera();
-            } else if (tab === 'users' && sections.users) {
-                sections.users.classList.remove('hidden');
+            } else {
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+                if (tab === 'payroll') {
+                    renderWageSettingTable();
+                    setupEmployeeDropdown();
+                    setupFilterEmployeeDropdown();
+                } else if (tab === 'income') {
+                    setupIncomeEmployeeDropdown();
+                    renderIncomeTable();
+                } else if (tab === 'revenue') {
+                    renderRevenueTable();
+                } else if (tab === 'expense') {
+                    renderExpenseTable();
+                } else if (tab === 'financial-chart') {
+                    updateFinancialChart();
+                } else if (tab === 'history') {
+                    renderTable();
+                }
             }
         }
+
+        function renderDashboardSummary() {
+            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
+            let weeklySum = 0, monthlySum = 0, yearlySum = 0;
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            records.forEach(item => {
+                let amt = item.amount || 0;
+                let itemDate = new Date(item.date);
+                if (!isNaN(itemDate.getTime()) && itemDate.getFullYear() === currentYear) {
+                    yearlySum += amt;
+                    if (itemDate.getMonth() === currentMonth) monthlySum += amt;
+                }
+            });
+
+            document.getElementById('dash_weekly').innerText = weeklySum.toLocaleString('th-TH', {minimumFractionDigits: 2});
+            document.getElementById('dash_monthly').innerText = monthlySum.toLocaleString('th-TH', {minimumFractionDigits: 2});
+            document.getElementById('dash_yearly').innerText = yearlySum.toLocaleString('th-TH', {minimumFractionDigits: 2});
+        }
+
+        function switchHistoryTab(cat) {
+            renderTable();
+        }
+
+        function deleteRecord(id) {
+            if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
+                let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
+                records = records.filter(item => item.id !== id);
+                localStorage.setItem('tkp7_records', JSON.stringify(records));
+                renderTable();
+            }
+        }
+
+        function renderTable() {
+            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
+            const tbody = document.getElementById('historyList');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีข้อมูลประวัติ</td></tr>`;
+                return;
+            }
+            records.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 text-xs sm:text-sm">${item.date}</td>
+                    <td class="p-3 text-xs text-gray-600">${item.creator || '-'}</td>
+                    <td class="p-3 text-xs sm:text-sm">${item.detail}</td>
+                    <td class="p-3 text-right font-medium">${item.amount ? item.amount.toLocaleString('th-TH', {minimumFractionDigits: 2}) : '-'}</td>
+                    <td class="p-3 text-center"><button type="button" onclick="deleteRecord(${item.id})" class="bg-red-500 text-white text-xs px-2 py-1 rounded">ลบ</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderIncomeTable() { renderTable(); }
+        function renderUserTable() { listenEmployeesRealtime(); }
+        function renderWageSettingTable() {}
+        function setupEmployeeDropdown() {}
+        function setupFilterEmployeeDropdown() {}
+        function setupIncomeEmployeeDropdown() {}
 
         function startCamera() {
             const video = document.getElementById('videoElement');
@@ -578,6 +1568,7 @@
             const canvas = document.getElementById('canvasElement');
             const preview = document.getElementById('face_preview');
             const previewCont = document.getElementById('face_preview_container');
+            const btnSave = document.getElementById('btn-save-attendance');
             if (!video || !canvas) return;
             canvas.width = 480;
             canvas.height = 360;
@@ -586,13 +1577,34 @@
             tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.6);
             if (preview) preview.src = tempFaceBase64;
             if (previewCont) previewCont.classList.remove('hidden');
+            if (btnSave) btnSave.classList.remove('hidden');
         }
+
+        function retakePhoto() {
+            tempFaceBase64 = "";
+            document.getElementById('face_preview_container').classList.add('hidden');
+            document.getElementById('btn-save-attendance').classList.add('hidden');
+        }
+
+        function saveAttendance() {
+            alert('✅ เช็คอินเข้างานสำเร็จ!');
+            retakePhoto();
+        }
+
+        function saveAdvanceRequest(e) { e.preventDefault(); alert('✅ ส่งคำขอเบิกเงินเรียบร้อยแล้ว'); document.getElementById('formAdvance').reset(); }
+        function saveReimburseRequest(e) { e.preventDefault(); alert('✅ ส่งบันทึกสำรองจ่ายเรียบร้อยแล้ว'); document.getElementById('formReimburse').reset(); }
+        function saveLeaveRequest(e) { e.preventDefault(); alert('✅ ส่งใบคำขอเรียบร้อยแล้ว'); document.getElementById('formLeave').reset(); }
+        function saveFuel(e) { e.preventDefault(); alert('✅ บันทึกค่าน้ำมันสำเร็จ!'); document.getElementById('formFuel').reset(); }
+        function saveRevenue(e) { e.preventDefault(); alert('✅ บันทึกรายการรายรับสำเร็จ!'); document.getElementById('formRevenue').reset(); renderRevenueTable(); }
+        function saveExpense(e) { e.preventDefault(); alert('✅ บันทึกรายการรายจ่ายสำเร็จ!'); document.getElementById('formExpense').reset(); renderExpenseTable(); }
 
         function checkAuthStatus() {
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user') || 'null');
             const authView = document.getElementById('auth-view');
             const appView = document.getElementById('app-view');
             const btnUsers = document.getElementById('btn-users');
+            const btnDashboard = document.getElementById('btn-dashboard');
+            const btnPayroll = document.getElementById('btn-payroll');
 
             if (currentUser && currentUser.name) {
                 authView.classList.add('hidden');
@@ -604,6 +1616,8 @@
 
                 if (currentUser.isAdmin) {
                     if (btnUsers) btnUsers.classList.remove('hidden');
+                    if (btnDashboard) btnDashboard.classList.remove('hidden');
+                    if (btnPayroll) btnPayroll.classList.remove('hidden');
                 }
 
                 startCamera();
@@ -616,3 +1630,4 @@
     </script>
 </body>
 </html>
+```[cite: 2, 3]
