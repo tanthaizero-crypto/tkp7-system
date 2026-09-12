@@ -52,7 +52,7 @@
                 <div onclick="switchAuthTab('register')" id="tab-register" class="flex-1 py-3.5 text-center font-semibold text-gray-400 border-b-2 border-transparent select-none">สมัครพนักงานใหม่</div>
             </div>
 
-            <div class="p-6 max-h-[75vh] overflow-y-auto">
+            <div id="auth-scroll-container" class="p-6 max-h-[75vh] overflow-y-auto">
                 <div id="container-login">
                     <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
@@ -68,13 +68,13 @@
                 </div>
 
                 <div id="container-register" class="hidden">
-                    <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4">
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล</label>
-                            <input type="text" id="reg_name" placeholder="ระบุชื่อและนามสกุลจริง" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
+                            <input type="text" id="reg_name" placeholder="ระบุชื่อและนามสกุลจริง" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่งงาน</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ตำแหน่งงาน <span class="text-red-500">*</span></label>
                             <select id="reg_position" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
                                 <option value="ช่างเทคนิคไฟฟ้า / EV Charger">ช่างเทคนิคไฟฟ้า / EV Charger</option>
                                 <option value="พนักงานขับรถ">พนักงานขับรถ</option>
@@ -83,12 +83,12 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ทะเบียนรถประจำตัว</label>
-                            <input type="text" id="reg_car" placeholder="เช่น 3กข 1234 กรุงเทพฯ" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ทะเบียนรถประจำตัว <span class="text-red-500">*</span></label>
+                            <input type="text" id="reg_car" placeholder="เช่น 3กข 1234 กรุงเทพฯ" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">📸 ถ่ายภาพหน้าตรงพนักงาน (รูปโปรไฟล์)</label>
-                            <input type="file" id="reg_avatar" accept="image/*" capture="user" onchange="previewImage(event, 'avatar')" required class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500 focus:outline-none">
+                            <input type="file" id="reg_avatar" accept="image/*" capture="user" onchange="previewImage(event, 'avatar')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500 focus:outline-none">
                             <div id="avatar_preview_container" class="mt-2 hidden text-center">
                                 <img id="avatar_preview" class="w-24 h-24 rounded-full mx-auto border-2 border-emerald-500 shadow-sm object-cover" alt="รูปถ่ายหน้าตรง">
                                 <span class="text-xs text-emerald-600 font-medium mt-1 block">✓ แนบรูปถ่ายหน้าตรงเรียบร้อย</span>
@@ -96,22 +96,22 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🪪 ถ่ายภาพบัตรประชาชน</label>
-                            <input type="file" id="reg_idcard" accept="image/*" capture="environment" onchange="previewImage(event, 'idcard')" required class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500 focus:outline-none">
+                            <input type="file" id="reg_idcard" accept="image/*" capture="environment" onchange="previewImage(event, 'idcard')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500 focus:outline-none">
                             <div id="idcard_preview_container" class="mt-2 hidden text-center">
                                 <img id="idcard_preview" class="max-h-28 mx-auto rounded-lg border shadow-sm" alt="ตัวอย่างบัตรประชาชน">
                                 <span class="text-xs text-emerald-600 font-medium mt-1 block">✓ แนบรูปบัตรประชาชนเรียบร้อย</span>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ (ใช้เข้าระบบ)</label>
-                            <input type="tel" id="reg_phone" placeholder="08XXXXXXXX" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ (ใช้เข้าระบบ) <span class="text-red-500">*</span></label>
+                            <input type="tel" id="reg_phone" placeholder="08XXXXXXXX" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">กำหนดรหัสผ่าน</label>
-                            <input type="password" id="reg_pass" placeholder="••••••••" required class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">กำหนดรหัสผ่าน <span class="text-red-500">*</span></label>
+                            <input type="password" id="reg_pass" placeholder="••••••••" class="w-full border rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-md">ลงทะเบียนพนักงาน</button>
-                    </form>
+                        <button type="button" onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-md active:scale-95">ลงทะเบียนพนักงาน</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1129,7 +1129,7 @@
             }
         };
 
-        // ฟังก์ชันย่อขนาดภาพอัตโนมัติก่อนจัดเก็บ ป้องกัน LocalStorage เต็ม
+        // ย่อขนาดภาพอัตโนมัติก่อนจัดเก็บ (กว้างยาวไม่เกิน 600px คุณภาพ 0.6)
         function compressAndResizeImage(file, maxWidth, maxHeight, quality, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1168,8 +1168,7 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // บีบอัดภาพไม่เกิน 800px และคุณภาพ 0.7
-            compressAndResizeImage(file, 800, 800, 0.7, function(base64) {
+            compressAndResizeImage(file, 600, 600, 0.6, function(base64) {
                 if (type === 'avatar') {
                     tempAvatarBase64 = base64;
                     const prev = document.getElementById('avatar_preview');
@@ -1222,413 +1221,82 @@
             });
         }
 
-        function updateFinancialChart() {
-            const yearSelect = document.getElementById('chart_filter_year');
-            const fromMonthSelect = document.getElementById('chart_filter_from_month');
-            const toMonthSelect = document.getElementById('chart_filter_to_month');
+        // ฟังก์ชันตรวจสอบและลงทะเบียนพนักงาน (พร้อมระบุจุดที่ลืมกรอก)
+        function submitRegister() {
+            const scrollBox = document.getElementById('auth-scroll-container');
+            const name = document.getElementById('reg_name').value.trim();
+            const position = document.getElementById('reg_position').value;
+            const car = document.getElementById('reg_car').value.trim();
+            const phone = document.getElementById('reg_phone').value.trim();
+            const pass = document.getElementById('reg_pass').value.trim();
 
-            const selectedYear = parseInt(yearSelect ? yearSelect.value : 2026);
-            let fromMonth = parseInt(fromMonthSelect ? fromMonthSelect.value : 0);
-            let toMonth = parseInt(toMonthSelect ? toMonthSelect.value : 11);
-
-            if (fromMonth > toMonth) {
-                let temp = fromMonth;
-                fromMonth = toMonth;
-                toMonth = temp;
-                if (fromMonthSelect) fromMonthSelect.value = fromMonth;
-                if (toMonthSelect) toMonthSelect.value = toMonth;
+            if (!name) {
+                alert('⚠️ กรุณาระบุ "ชื่อ - นามสกุล"');
+                if (scrollBox) scrollBox.scrollTop = 0;
+                document.getElementById('reg_name').focus();
+                return;
             }
-
-            const revenues = JSON.parse(localStorage.getItem('tkp7_revenues')) || [];
-            const expenses = JSON.parse(localStorage.getItem('tkp7_expenses')) || [];
-
-            let labels = [];
-            let revData = [];
-            let expData = [];
-            let profitData = [];
-
-            let totalRevSum = 0;
-            let totalExpSum = 0;
-            let totalVatExpSum = 0;
-            let totalWhtExpSum = 0;
-
-            for (let m = fromMonth; m <= toMonth; m++) {
-                labels.push(thaiMonths[m]);
-
-                let mRev = 0;
-                let mExp = 0;
-
-                revenues.forEach(r => {
-                    const d = new Date(r.date);
-                    if (d.getFullYear() === selectedYear && d.getMonth() === m) {
-                        mRev += (r.amount || 0);
-                    }
-                });
-
-                expenses.forEach(e => {
-                    const d = new Date(e.date);
-                    if (d.getFullYear() === selectedYear && d.getMonth() === m) {
-                        mExp += (e.amount || 0);
-                        totalVatExpSum += (e.vatAmount || 0);
-                        totalWhtExpSum += (e.whtAmount || 0);
-                    }
-                });
-
-                revData.push(mRev);
-                expData.push(mExp);
-                profitData.push(mRev - mExp);
-
-                totalRevSum += mRev;
-                totalExpSum += mExp;
+            if (!car) {
+                alert('⚠️ กรุณาระบุ "ทะเบียนรถประจำตัว"');
+                document.getElementById('reg_car').focus();
+                return;
             }
-
-            const netProfit = totalRevSum - totalExpSum;
-
-            const cardRev = document.getElementById('card_rev_total');
-            const cardExp = document.getElementById('card_exp_total');
-            const cardProfit = document.getElementById('card_net_profit');
-            const cardVat = document.getElementById('card_vat_expense');
-            const cardWht = document.getElementById('card_wht_expense');
-
-            if (cardRev) cardRev.innerText = `${totalRevSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-            if (cardExp) cardExp.innerText = `${totalExpSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-            if (cardProfit) {
-                cardProfit.innerText = `${netProfit.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-                cardProfit.className = `text-lg font-extrabold ${netProfit < 0 ? 'text-red-600' : 'text-blue-900'}`;
+            if (!phone) {
+                alert('⚠️ กรุณาระบุ "เบอร์โทรศัพท์"');
+                document.getElementById('reg_phone').focus();
+                return;
             }
-            if (cardVat) cardVat.innerText = `${totalVatExpSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-            if (cardWht) cardWht.innerText = `${totalWhtExpSum.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-
-            const ctx = document.getElementById('financialComparisonChart')?.getContext('2d');
-            if (!ctx) return;
-
-            if (financialChartInstance) {
-                financialChartInstance.destroy();
-            }
-
-            financialChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'รายรับ (บาท)',
-                            data: revData,
-                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
-                            borderColor: 'rgb(16, 185, 129)',
-                            borderWidth: 1,
-                            borderRadius: 6
-                        },
-                        {
-                            label: 'รายจ่าย (บาท)',
-                            data: expData,
-                            backgroundColor: 'rgba(239, 68, 68, 0.85)',
-                            borderColor: 'rgb(239, 68, 68)',
-                            borderWidth: 1,
-                            borderRadius: 6
-                        },
-                        {
-                            type: 'line',
-                            label: 'กำไรสุทธิ (บาท)',
-                            data: profitData,
-                            borderColor: 'rgb(37, 99, 235)',
-                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: { font: { family: 'Prompt', size: 12 } }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.raw.toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString('th-TH') + ' ฿';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function calculateExpenseTax() {
-            const baseAmount = parseFloat(document.getElementById('exp_base_amount')?.value) || 0;
-            const vatType = document.getElementById('exp_vat_type')?.value || 'none';
-            const whtRate = parseFloat(document.getElementById('exp_wht_rate')?.value) || 0;
-
-            let vatAmount = 0;
-            let netAmount = 0;
-            let finalBase = baseAmount;
-
-            if (vatType === 'exclude') {
-                vatAmount = baseAmount * 0.07;
-            } else if (vatType === 'include') {
-                finalBase = (baseAmount * 100) / 107;
-                vatAmount = baseAmount - finalBase;
-            } else {
-                vatAmount = 0;
-            }
-
-            const whtAmount = finalBase * (whtRate / 100);
-
-            if (vatType === 'include') {
-                netAmount = baseAmount - whtAmount;
-            } else {
-                netAmount = (baseAmount + vatAmount) - whtAmount;
-            }
-
-            const vatInput = document.getElementById('exp_vat_amount');
-            const whtInput = document.getElementById('exp_wht_amount');
-            const netInput = document.getElementById('exp_net_amount');
-
-            if (vatInput) vatInput.value = vatAmount.toFixed(2);
-            if (whtInput) whtInput.value = whtAmount.toFixed(2);
-            if (netInput) netInput.value = Math.max(0, netAmount).toFixed(2);
-        }
-
-        async function runAiOcrScan() {
-            if (!tempExpBillBase64) {
-                alert('⚠️ กรุณาแนบรูปภาพบิลหรือใบเสร็จก่อนให้ AI สแกน');
+            if (!pass) {
+                alert('⚠️ กรุณาระบุ "รหัสผ่าน"');
+                document.getElementById('reg_pass').focus();
                 return;
             }
 
-            const statusBox = document.getElementById('ocr_status_box');
-            const statusText = document.getElementById('ocr_status_text');
-            const progressText = document.getElementById('ocr_progress_text');
-            const progressBar = document.getElementById('ocr_progress_bar');
-            const btnRun = document.getElementById('btn_run_ocr');
-
-            if (statusBox) statusBox.classList.remove('hidden');
-            if (btnRun) {
-                btnRun.disabled = true;
-                btnRun.classList.add('opacity-50', 'cursor-not-allowed');
+            let employees = JSON.parse(localStorage.getItem('tkp7_employees')) || [];
+            if (employees.some(emp => emp.phone === phone)) {
+                alert('⚠️ เบอร์โทรศัพท์นี้ถูกใช้งานในระบบแล้ว กรุณาใช้เบอร์อื่น');
+                document.getElementById('reg_phone').focus();
+                return;
             }
+
+            const newEmployee = {
+                name,
+                position,
+                car,
+                phone,
+                pass,
+                avatarImg: tempAvatarBase64 || null,
+                idcardImg: tempIDCardBase64 || null,
+                isApproved: false,
+                isAdmin: false
+            };
 
             try {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error('ไม่สามารถโหลด AI Library ได้ กรุณาเชื่อมต่ออินเทอร์เน็ต');
-                }
-
-                if (statusText) statusText.innerText = 'AI กำลังเริ่มต้นโมเดลและอ่านข้อความ...';
-
-                const worker = await Tesseract.createWorker(['tha', 'eng'], 1, {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            const p = Math.round(m.progress * 100);
-                            if (progressText) progressText.innerText = `${p}%`;
-                            if (progressBar) progressBar.style.width = `${p}%`;
-                            if (statusText) statusText.innerText = 'กำลังสแกนตัวอักษรและตัวเลข...';
-                        }
-                    }
-                });
-
-                const ret = await worker.recognize(tempExpBillBase64);
-                await worker.terminate();
-
-                const text = ret.data.text;
-                parseOcrResultToExpenseForm(text);
-
-                if (statusText) statusText.innerText = '✓ สแกนและกรอกข้อมูลสำเร็จ!';
-                setTimeout(() => {
-                    if (statusBox) statusBox.classList.add('hidden');
-                    if (progressBar) progressBar.style.width = '0%';
-                }, 3000);
-
+                employees.push(newEmployee);
+                localStorage.setItem('tkp7_employees', JSON.stringify(employees));
             } catch (err) {
-                console.error("OCR Error:", err);
-                alert('⚠️ เกิดข้อผิดพลาดในการสแกน: ' + err.message);
-                if (statusBox) statusBox.classList.add('hidden');
-            } finally {
-                if (btnRun) {
-                    btnRun.disabled = false;
-                    btnRun.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            }
-        }
-
-        function parseOcrResultToExpenseForm(rawText) {
-            if (!rawText) return;
-            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            const allTextLower = rawText.toLowerCase();
-
-            const moneyRegex = /([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})|[0-9]+(?:\.[0-9]{2}))/g;
-            let candidateAmounts = [];
-
-            lines.forEach(line => {
-                const lower = line.toLowerCase();
-                const matches = line.match(moneyRegex);
-                if (matches) {
-                    matches.forEach(m => {
-                        const num = parseFloat(m.replace(/,/g, ''));
-                        if (!isNaN(num) && num > 0) {
-                            if (lower.includes('total') || lower.includes('รวม') || lower.includes('สุทธิ') || lower.includes('ชำระ') || lower.includes('net')) {
-                                candidateAmounts.push({ val: num, weight: 2 });
-                            } else {
-                                candidateAmounts.push({ val: num, weight: 1 });
-                            }
-                        }
-                    });
-                }
-            });
-
-            let detectedAmount = 0;
-            if (candidateAmounts.length > 0) {
-                candidateAmounts.sort((a, b) => (b.val * b.weight) - (a.val * a.weight));
-                detectedAmount = candidateAmounts[0].val;
+                alert('⚠️ พื้นที่จัดเก็บของเบราว์เซอร์เต็ม ไม่สามารถบันทึกข้อมูลภาพขนาดใหญ่ได้');
+                console.error(err);
+                return;
             }
 
-            let detectedDate = "";
-            const dateRegex1 = /([0-3]?[0-9])[\/\-\.]([0-1]?[0-9])[\/\-\.](25[0-9]{2}|20[0-9]{2})/g;
-            const dateRegex2 = /(20[0-9]{2}|25[0-9]{2})[\/\-\.]([0-1]?[0-9])[\/\-\.]([0-3]?[0-9])/g;
+            // ล้างฟอร์ม
+            document.getElementById('reg_name').value = '';
+            document.getElementById('reg_car').value = '';
+            document.getElementById('reg_phone').value = '';
+            document.getElementById('reg_pass').value = '';
+            document.getElementById('reg_avatar').value = '';
+            document.getElementById('reg_idcard').value = '';
+            tempAvatarBase64 = "";
+            tempIDCardBase64 = "";
             
-            for (let line of lines) {
-                let match = dateRegex1.exec(line);
-                if (match) {
-                    let d = match[1].padStart(2, '0');
-                    let m = match[2].padStart(2, '0');
-                    let y = parseInt(match[3]);
-                    if (y >= 2500) y -= 543;
-                    detectedDate = `${y}-${m}-${d}`;
-                    break;
-                }
-                match = dateRegex2.exec(line);
-                if (match) {
-                    let y = parseInt(match[1]);
-                    let m = match[2].padStart(2, '0');
-                    let d = match[3].padStart(2, '0');
-                    if (y >= 2500) y -= 543;
-                    detectedDate = `${y}-${m}-${d}`;
-                    break;
-                }
-            }
+            const prevAvatar = document.getElementById('avatar_preview_container');
+            const prevIdCard = document.getElementById('idcard_preview_container');
+            if (prevAvatar) prevAvatar.classList.add('hidden');
+            if (prevIdCard) prevIdCard.classList.add('hidden');
 
-            let hasVat = allTextLower.includes('vat') || allTextLower.includes('ภาษีมูลค่าเพิ่ม') || allTextLower.includes('7%');
-            let hasWht = allTextLower.includes('หัก ณ ที่จ่าย') || allTextLower.includes('withholding') || allTextLower.includes('wht');
-
-            let matchedCategory = "ซื้ออุปกรณ์ / อะไหล่ติดตั้ง";
-            if (allTextLower.includes('ขนส่ง') || allTextLower.includes('kerry') || allTextLower.includes('flash') || allTextLower.includes('ไปรษณีย์') || allTextLower.includes('จัดส่ง')) {
-                matchedCategory = "ค่าขนส่ง / ค่าจัดส่งพัสดุ";
-            } else if (allTextLower.includes('บริการ') || allTextLower.includes('ค่าแรง') || allTextLower.includes('รับเหมา')) {
-                matchedCategory = "ค่าบริการ / ค่าจ้างผู้รับเหมา";
-            } else if (allTextLower.includes('ซ่อม') || allTextLower.includes('อู่') || allTextLower.includes('ยาง') || allTextLower.includes('น้ำมันเครื่อง')) {
-                matchedCategory = "ค่าซ่อมบำรุงรถ / เครื่องมือ";
-            } else if (allTextLower.includes('การไฟฟ้า') || allTextLower.includes('ประปา') || allTextLower.includes('internet') || allTextLower.includes('โทรศัพท์')) {
-                matchedCategory = "ค่าสาธารณูปโภค (น้ำ, ไฟ, เน็ต)";
-            }
-
-            let detectedMerchant = "";
-            if (lines.length > 0) {
-                detectedMerchant = lines.slice(0, 3).join(' ').replace(/[^\u0E00-\u0E7Fa-zA-Z0-9\s]/g, '').trim();
-            }
-
-            if (detectedDate) {
-                const dateElem = document.getElementById('exp_date');
-                if (dateElem) dateElem.value = detectedDate;
-            }
-
-            const baseInput = document.getElementById('exp_base_amount');
-            if (detectedAmount > 0 && baseInput) {
-                baseInput.value = detectedAmount.toFixed(2);
-            }
-
-            const vatTypeSelect = document.getElementById('exp_vat_type');
-            if (vatTypeSelect) {
-                vatTypeSelect.value = hasVat ? 'include' : 'none';
-            }
-
-            const whtRateSelect = document.getElementById('exp_wht_rate');
-            if (whtRateSelect) {
-                if (hasWht) {
-                    whtRateSelect.value = matchedCategory.includes('ขนส่ง') ? '1' : '3';
-                } else {
-                    whtRateSelect.value = '0';
-                }
-            }
-
-            const catElem = document.getElementById('exp_category');
-            if (catElem) catElem.value = matchedCategory;
-
-            const detailElem = document.getElementById('exp_detail');
-            if (detailElem) {
-                detailElem.value = detectedMerchant ? `[สแกน AI] ${detectedMerchant}` : '[สแกน AI] รายจ่ายตามเอกสารแนบ';
-            }
-
-            calculateExpenseTax();
-        }
-
-        function printIncomeReport() {
-            const docDateElem = document.getElementById('print_doc_date');
-            const empNameElem = document.getElementById('print_emp_name');
-            const filterEmp = document.getElementById('income_filter_emp');
-            
-            if (docDateElem) {
-                const now = new Date();
-                docDateElem.innerText = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            }
-            if (empNameElem && filterEmp) {
-                empNameElem.innerText = filterEmp.value === 'ALL' ? 'แสดงพนักงานทุกคน' : filterEmp.value;
-            }
-            window.print();
-        }
-
-        function printRevenueReport() {
-            const docDateElem = document.getElementById('print_rev_doc_date');
-            const totalSumElem = document.getElementById('print_rev_total_sum');
-            const currentTotal = document.getElementById('rev_total_display')?.innerText || '0.00 ฿';
-            
-            if (docDateElem) {
-                const now = new Date();
-                docDateElem.innerText = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            }
-            if (totalSumElem) {
-                totalSumElem.innerText = currentTotal;
-            }
-            window.print();
-        }
-
-        function printExpenseReport() {
-            const docDateElem = document.getElementById('print_exp_doc_date');
-            const totalSumElem = document.getElementById('print_exp_total_sum');
-            const currentTotal = document.getElementById('exp_total_display')?.innerText || '0.00 ฿';
-            
-            if (docDateElem) {
-                const now = new Date();
-                docDateElem.innerText = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            }
-            if (totalSumElem) {
-                totalSumElem.innerText = currentTotal;
-            }
-            window.print();
-        }
-
-        function toggleSidebar(open) {
-            const sidebar = document.getElementById('sidebar-menu');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (open) {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            }
+            alert('✅ ลงทะเบียนพนักงานสำเร็จเรียบร้อยแล้ว!\nกรุณาแจ้งผู้ดูแลระบบเพื่อทำการอนุมัติสิทธิ์เข้าใช้งาน');
+            switchAuthTab('login');
         }
 
         function switchAuthTab(tab) {
@@ -1678,64 +1346,12 @@
             }
 
             if (!foundUser.isApproved) {
-                alert('⏳ บัญชีของคุณอยู่ระหว่างรอการอนุมัติใช้งาน');
+                alert('⏳ บัญชีของคุณอยู่ระหว่างรอการอนุมัติใช้งานจากผู้ดูแลระบบ');
                 return;
             }
 
             localStorage.setItem('tkp7_current_user', JSON.stringify(foundUser));
             checkAuthStatus();
-        }
-
-        function handleRegister(e) {
-            e.preventDefault();
-            const name = document.getElementById('reg_name').value.trim();
-            const position = document.getElementById('reg_position').value;
-            const car = document.getElementById('reg_car').value.trim();
-            const phone = document.getElementById('reg_phone').value.trim();
-            const pass = document.getElementById('reg_pass').value.trim();
-
-            if (!name || !position || !car || !phone || !pass) {
-                alert('⚠️ กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง');
-                return;
-            }
-
-            let employees = JSON.parse(localStorage.getItem('tkp7_employees')) || [];
-            if (employees.some(emp => emp.phone === phone)) {
-                alert('⚠️ เบอร์โทรศัพท์นี้ถูกใช้งานในระบบแล้ว');
-                return;
-            }
-
-            const newEmployee = {
-                name,
-                position,
-                car,
-                phone,
-                pass,
-                avatarImg: tempAvatarBase64 || null,
-                idcardImg: tempIDCardBase64 || null,
-                isApproved: false,
-                isAdmin: false
-            };
-
-            try {
-                employees.push(newEmployee);
-                localStorage.setItem('tkp7_employees', JSON.stringify(employees));
-            } catch (err) {
-                alert('⚠️ พื้นที่จัดเก็บของเบราว์เซอร์เต็ม กรุณาลดขนาดไฟล์ภาพหรือลองใหม่อีกครั้ง');
-                console.error(err);
-                return;
-            }
-
-            document.getElementById('formRegister').reset();
-            tempAvatarBase64 = "";
-            tempIDCardBase64 = "";
-            const prevAvatar = document.getElementById('avatar_preview_container');
-            const prevIdCard = document.getElementById('idcard_preview_container');
-            if (prevAvatar) prevAvatar.classList.add('hidden');
-            if (prevIdCard) prevIdCard.classList.add('hidden');
-
-            alert('✅ ลงทะเบียนพนักงานสำเร็จ! กรุณารอผู้ดูแลระบบอนุมัติ');
-            switchAuthTab('login');
         }
 
         function handleLogout() {
@@ -1785,7 +1401,7 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.6);
             if (preview) preview.src = tempFaceBase64;
             if (previewCont) previewCont.classList.remove('hidden');
             if (btnSave) btnSave.classList.remove('hidden');
