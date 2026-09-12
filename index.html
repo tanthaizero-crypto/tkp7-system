@@ -138,10 +138,11 @@
         </header>
 
         <div class="flex-1 flex relative">
-            <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden transition-opacity no-print"></div>
+            <!-- ปรับให้ Backdrop ทำงานเฉพาะจอมือถืออย่างเคร่งครัด -->
+            <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity no-print"></div>
 
-            <!-- Sidebar เมนูซ้าย -->
-            <aside id="sidebar-menu" class="fixed md:sticky top-0 md:top-[57px] left-0 bottom-0 z-50 md:z-20 w-72 bg-white border-r border-gray-200 flex flex-col p-4 shadow-xl md:shadow-none -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out h-screen md:h-[calc(100vh-57px)] no-print">
+            <!-- Sidebar เมนูซ้าย (ปรับ z-index และการจัดวาง) -->
+            <aside id="sidebar-menu" class="fixed md:static top-0 left-0 bottom-0 z-50 md:z-10 w-72 bg-white border-r border-gray-200 flex flex-col p-4 shadow-xl md:shadow-none -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out h-screen md:h-auto no-print">
                 <div class="flex items-center justify-between pb-3 mb-2 border-b md:hidden">
                     <div class="flex items-center gap-2">
                         <img src="logo.jpg" onerror="this.onerror=null; this.src='1785518472043 - Copy.jpg';" alt="Logo" class="w-7 h-7 rounded-lg object-cover">
@@ -169,43 +170,43 @@
                 <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">เมนูการทำงาน</div>
                 
                 <nav class="flex-1 overflow-y-auto space-y-1 pr-1">
-                    <button type="button" onclick="switchAppTab('face')" id="btn-face" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left transition bg-blue-50 text-blue-700 font-semibold shadow-sm">
+                    <button type="button" onclick="switchAppTab('face')" id="btn-face" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left transition bg-blue-50 text-blue-700 font-semibold shadow-sm cursor-pointer">
                         <span class="text-lg">📷</span> <span>สแกนหน้าเข้างาน</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden">
+                    <button type="button" onclick="switchAppTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
                         <span class="text-lg">📊</span> <span>แดชบอร์ดรายจ่าย</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('advance')" id="btn-advance" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('advance')" id="btn-advance" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💸</span> <span>ขอเบิกเงิน</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('reimburse')" id="btn-reimburse" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('reimburse')" id="btn-reimburse" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💳</span> <span>สำรองจ่าย</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('leave')" id="btn-leave" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('leave')" id="btn-leave" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">📅</span> <span>ยื่นใบลา</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('payroll')" id="btn-payroll" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden">
+                    <button type="button" onclick="switchAppTab('payroll')" id="btn-payroll" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
                         <span class="text-lg">💵</span> <span>บันทึกค่าแรง</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('fuel')" id="btn-fuel" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('fuel')" id="btn-fuel" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">⛽</span> <span>ค่าน้ำมันรถ</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('income')" id="btn-income" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('income')" id="btn-income" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💰</span> <span>รายได้ค้างจ่ายสุทธิ</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('revenue')" id="btn-revenue" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('revenue')" id="btn-revenue" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💵</span> <span>รายการรายรับ</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('expense')" id="btn-expense" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('expense')" id="btn-expense" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">💸</span> <span>รายการรายจ่าย</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('financial-chart')" id="btn-financial-chart" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('financial-chart')" id="btn-financial-chart" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">📈</span> <span>สรุปรายรับ-รายจ่าย (กราฟ)</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('history')" id="btn-history" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition">
+                    <button type="button" onclick="switchAppTab('history')" id="btn-history" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer">
                         <span class="text-lg">📋</span> <span>ประวัติรายการทั้งหมด</span>
                     </button>
-                    <button type="button" onclick="switchAppTab('users')" id="btn-users" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden">
+                    <button type="button" onclick="switchAppTab('users')" id="btn-users" class="w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition hidden cursor-pointer">
                         <span class="text-lg">👥</span> <span>จัดการบัญชีผู้ใช้</span>
                     </button>
                 </nav>
@@ -1129,7 +1130,6 @@
             }
         };
 
-        // ย่อขนาดภาพอัตโนมัติก่อนจัดเก็บ (กว้างยาวไม่เกิน 600px คุณภาพ 0.6)
         function compressAndResizeImage(file, maxWidth, maxHeight, quality, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1221,7 +1221,6 @@
             });
         }
 
-        // ฟังก์ชันตรวจสอบและลงทะเบียนพนักงาน (พร้อมระบุจุดที่ลืมกรอก)
         function submitRegister() {
             const scrollBox = document.getElementById('auth-scroll-container');
             const name = document.getElementById('reg_name').value.trim();
@@ -1280,7 +1279,6 @@
                 return;
             }
 
-            // ล้างฟอร์ม
             document.getElementById('reg_name').value = '';
             document.getElementById('reg_car').value = '';
             document.getElementById('reg_phone').value = '';
@@ -1297,6 +1295,18 @@
 
             alert('✅ ลงทะเบียนพนักงานสำเร็จเรียบร้อยแล้ว!\nกรุณาแจ้งผู้ดูแลระบบเพื่อทำการอนุมัติสิทธิ์เข้าใช้งาน');
             switchAuthTab('login');
+        }
+
+        function toggleSidebar(open) {
+            const sidebar = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (open) {
+                if (sidebar) sidebar.classList.remove('-translate-x-full');
+                if (backdrop) backdrop.classList.remove('hidden');
+            } else {
+                if (sidebar) sidebar.classList.add('-translate-x-full');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
         }
 
         function switchAuthTab(tab) {
@@ -2222,8 +2232,8 @@
                 'users': document.getElementById('btn-users')
             };
 
-            const normalClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition";
-            const activeClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-semibold text-sm text-left bg-blue-50 text-blue-700 shadow-sm transition";
+            const normalClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-medium text-sm text-left text-gray-600 hover:bg-gray-100 transition cursor-pointer";
+            const activeClass = "w-full flex items-center gap-3 py-2.5 px-3.5 rounded-xl font-semibold text-sm text-left bg-blue-50 text-blue-700 shadow-sm transition cursor-pointer";
 
             Object.keys(tabButtons).forEach(key => {
                 if (tabButtons[key]) {
