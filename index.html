@@ -757,7 +757,9 @@
             measurementId: "G-8FHBCKP9EM"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
 
         const defaultOilPrices = {
@@ -774,6 +776,7 @@
         let tempReimbBillBase64 = "";
         let currentHistoryFilter = 'all';
         let chartInstance = null;
+        let mediaStream = null;
 
         window.onload = function() {
             try {
@@ -792,6 +795,33 @@
                 console.error("Init error:", err);
             }
         };
+
+        function getLocation() {
+            const statusElem = document.getElementById('map_status');
+            const iframeElem = document.getElementById('google_map_iframe');
+            if (!navigator.geolocation) {
+                if (statusElem) statusElem.innerText = "เบราว์เซอร์ไม่รองรับการระบุพิกัด GPS";
+                return;
+            }
+            if (statusElem) statusElem.innerText = "กำลังค้นหาตำแหน่งปัจจุบันของคุณ...";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    if (statusElem) statusElem.innerText = `พิกัดปัจจุบัน: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    if (iframeElem) {
+                        iframeElem.src = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+                    }
+                },
+                (error) => {
+                    if (statusElem) statusElem.innerText = "ไม่สามารถดึงพิกัดได้ (กรุณาอนุญาตการเข้าถึงตำแหน่ง)";
+                    if (iframeElem) {
+                        iframeElem.src = `https://maps.google.com/maps?q=13.7563,100.5018&z=13&output=embed`;
+                    }
+                },
+                { timeout: 10000, enableHighAccuracy: true }
+            );
+        }
 
         function onFuelTypeChange() {
             const fuelType = document.getElementById('f_fuel_type')?.value || 'Diesel';
@@ -988,7 +1018,6 @@
             });
         }
 
-        // ดึงข้อมูลประวัติจาก Firestore แบบ Real-time รวมทุกประเภทรายการเข้าไว้ด้วยกัน
         function listenRecordsRealtime() {
             db.collection("records").onSnapshot((snapshot) => {
                 let records = [];
@@ -1266,7 +1295,6 @@
             amountInput.value = employeeWages[selectedName] !== undefined ? employeeWages[selectedName] : 500;
         }
 
-        let mediaStream = null;
         function startCamera() {
             const video = document.getElementById('videoElement');
             const placeholder = document.getElementById('camera-placeholder');
@@ -1626,7 +1654,6 @@
                     if (d.getMonth() === currentMonth) {
                         monthlyExp += amt;
                     }
-                    // เช็คสัปดาห์นี้
                     const diffTime = Math.abs(now - d);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     if (diffDays <= 7) weeklyExp += amt;
@@ -1637,7 +1664,6 @@
             if (document.getElementById('dash_monthly')) document.getElementById('dash_monthly').innerText = monthlyExp.toLocaleString('th-TH', {minimumFractionDigits: 2});
             if (document.getElementById('dash_yearly')) document.getElementById('dash_yearly').innerText = yearlyExp.toLocaleString('th-TH', {minimumFractionDigits: 2});
 
-            // สร้างกราฟเปรียบเทียบ
             const canvasElem = document.getElementById('financialComparisonChart');
             if (!canvasElem) return;
 
@@ -1801,7 +1827,7 @@
                 loadApprovedEmployeesToDropdown();
                 loadApprovedEmployeesToDropdownForIncome();
             } else {
-                authView.classList.add('hidden');
+                authView.classList.remove('hidden');
                 appView.classList.add('hidden');
             }
         }
