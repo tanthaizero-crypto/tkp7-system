@@ -20,16 +20,14 @@
         body { font-family: 'Prompt', sans-serif; }
         @media print {
             body * { visibility: hidden; }
-            #printable-income-area, #printable-income-area *,
-            #printable-revenue-area, #printable-revenue-area *,
-            #printable-expense-area, #printable-expense-area * { visibility: visible; }
-            #printable-income-area, #printable-revenue-area, #printable-expense-area {
+            #printable-income-area, #printable-income-area * { visibility: visible; }
+            #printable-income-area {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
                 margin: 0;
-                padding: 20px;
+                padding: 15px;
                 background: white !important;
                 color: black !important;
             }
@@ -426,7 +424,7 @@
                 <!-- 2. ฟอร์มค่าน้ำมัน -->
                 <section id="section-fuel" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <h2 class="text-base sm:text-lg font-bold mb-4 text-blue-950 flex items-center gap-2">
-                        <span>⛽</span> บันทึกค่าน้ำมันรถบริษัท
+                        <span>⛽</span> บันทึกค่าน้ำมันรถบริษัท (อ้างอิงราคาจาก Kapook Gas Price)
                     </h2>
                     <form id="formFuel" onsubmit="saveFuel(event)" class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -441,11 +439,12 @@
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ประเภทเชื้อเพลิง</label>
                                 <select id="f_fuel_type" onchange="onFuelTypeChange()" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
-                                    <option value="Diesel">ดีเซล (Diesel B7)</option>
-                                    <option value="Gasohol95">แก๊สโซฮอล์ 95</option>
-                                    <option value="Gasohol91">แก๊สโซฮอล์ 91</option>
-                                    <option value="Benzene95">เบนซิน 95</option>
-                                    <option value="EV">EV (ชาร์จไฟฟ้า)</option>
+                                    <option value="Diesel">ดีเซล B7 (39.84 ฿)</option>
+                                    <option value="Gasohol95">แก๊สโซฮอล์ 95 (39.09 ฿)</option>
+                                    <option value="Gasohol91">แก๊สโซฮอล์ 91 (38.72 ฿)</option>
+                                    <option value="GasoholE20">แก๊สโซฮอล์ E20 (34.09 ฿)</option>
+                                    <option value="Benzene95">เบนซิน 95 (48.08 ฿)</option>
+                                    <option value="EV">EV (ชาร์จไฟฟ้า - 7.50 ฿)</option>
                                 </select>
                             </div>
                             <div>
@@ -462,9 +461,9 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ราคากลางต่อหน่วย (บาท)</label>
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ราคากลางต่อหน่วย (บาท) [Kapook Gas]</label>
                                 <input type="number" step="0.01" id="f_price_custom" oninput="calculateFuel()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-emerald-700" placeholder="39.84">
-                                <span id="f_price_status" class="text-[11px] text-gray-400 mt-1 block">พนักงานทั่วไปแก้ไขไม่ได้ (เฉพาะ Admin / ผู้จัดการ)</span>
+                                <span id="f_price_status" class="text-[11px] text-gray-400 mt-1 block">อัปเดตตามราคากลางล่าสุดจาก Kapook Gas Price</span>
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินรวม (บาท)</label>
@@ -525,7 +524,7 @@
                                         <select id="income_filter_emp" onchange="renderIncomeTable()" class="bg-white border rounded-lg px-2.5 py-1 text-xs font-medium text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                         </select>
                                     </div>
-                                    <button type="button" onclick="printIncomeReport()" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm">
+                                    <button type="button" onclick="printIncomeReport()" class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm cursor-pointer">
                                         <span>🖨️</span> <span>พิมพ์เอกสารรายได้</span>
                                     </button>
                                 </div>
@@ -541,7 +540,7 @@
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto border border-gray-200 rounded-xl print:border-gray-800">
+                        <div class="overflow-x-auto border border-gray-200 rounded-xl print:border-gray-800 mb-12">
                             <table class="w-full text-left border-collapse min-w-[620px] print:min-w-full">
                                 <thead>
                                     <tr class="bg-gray-100 text-gray-700 text-xs font-semibold print:bg-gray-200 print:text-black">
@@ -555,6 +554,20 @@
                                 <tbody id="incomeDailyList" class="text-xs sm:text-sm divide-y divide-gray-100 print:divide-gray-300">
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- ส่วนลายเซ็นด้านล่างสุด -->
+                        <div class="flex justify-between items-start mt-8 pt-4 px-4 text-xs sm:text-sm">
+                            <div class="text-left space-y-10 w-56">
+                                <p class="font-medium text-gray-800">ลายเซ็นผู้ออกเอกสาร.......................................................</p>
+                                <p class="text-gray-500 pl-6">( ....................................................... )</p>
+                                <p class="text-gray-500 pl-6">วันที่: ......./......./........</p>
+                            </div>
+                            <div class="text-left space-y-10 w-56">
+                                <p class="font-medium text-gray-800">ลายเซ็นรับทราบพนักงาน..................................................</p>
+                                <p class="text-gray-500 pl-6">( ....................................................... )</p>
+                                <p class="text-gray-500 pl-6">วันที่: ......./......./........</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -763,10 +776,11 @@
         const db = firebase.firestore();
 
         const defaultOilPrices = {
-            "Diesel": 32.94,
-            "Gasohol95": 37.55,
-            "Gasohol91": 37.18,
-            "Benzene95": 45.46,
+            "Diesel": 39.84,
+            "Gasohol95": 39.09,
+            "Gasohol91": 38.72,
+            "GasoholE20": 34.09,
+            "Benzene95": 48.08,
             "EV": 7.50
         };
 
@@ -795,6 +809,15 @@
                 console.error("Init error:", err);
             }
         };
+
+        function printIncomeReport() {
+            const docDateElem = document.getElementById('print_doc_date');
+            if (docDateElem) {
+                const now = new Date();
+                docDateElem.innerText = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            window.print();
+        }
 
         function getLocation() {
             const statusElem = document.getElementById('map_status');
