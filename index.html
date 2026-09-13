@@ -716,7 +716,7 @@
                 <section id="section-history" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 gap-2">
                         <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2">
-                            <span>📋</span> ประวัติการบันทึกรายการทั้งหมด
+                            <span>📋</span> ประวัติการบันทึกรายการทั้งหมด (Cloud Real-time)
                         </h2>
                         <div class="flex gap-1 bg-gray-100 p-1 rounded-xl overflow-x-auto">
                             <button type="button" onclick="switchHistoryTab('all')" id="history-tab-all" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-blue-600 text-white transition whitespace-nowrap">ทั้งหมด</button>
@@ -794,13 +794,6 @@
         let tempIDCardBase64 = "";
         let tempFaceBase64 = "";
         let tempReimbBillBase64 = "";
-        let tempMileStartBase64 = "";
-        let tempMileEndBase64 = "";
-        let tempBillBase64 = "";
-        let tempRevSlipBase64 = "";
-        let tempExpBillBase64 = "";
-        let currentCoords = { lat: 13.7563, lng: 100.5018 };
-        let mediaStream = null;
         let currentHistoryFilter = 'all';
 
         window.onload = function() {
@@ -811,6 +804,7 @@
                 renderRevenueTable();
                 renderExpenseTable();
                 initAiBackgroundScheduler();
+                listenRecordsRealtime();
                 
                 const today = new Date().toISOString().split('T')[0];
                 ['adv_date', 'reimb_date', 'leave_start', 'leave_end', 'p_date', 'f_date', 'rev_date', 'exp_date'].forEach(id => {
@@ -898,26 +892,6 @@
                     tempReimbBillBase64 = base64;
                     document.getElementById('reimb_bill_preview').src = base64;
                     document.getElementById('reimb_bill_preview_container').classList.remove('hidden');
-                } else if (type === 'mile_start') {
-                    tempMileStartBase64 = base64;
-                    document.getElementById('mile_start_preview').src = base64;
-                    document.getElementById('mile_start_preview_container').classList.remove('hidden');
-                } else if (type === 'mile_end') {
-                    tempMileEndBase64 = base64;
-                    document.getElementById('mile_end_preview').src = base64;
-                    document.getElementById('mile_end_preview_container').classList.remove('hidden');
-                } else if (type === 'bill') {
-                    tempBillBase64 = base64;
-                    document.getElementById('bill_preview').src = base64;
-                    document.getElementById('bill_preview_container').classList.remove('hidden');
-                } else if (type === 'rev_slip') {
-                    tempRevSlipBase64 = base64;
-                    document.getElementById('rev_slip_preview').src = base64;
-                    document.getElementById('rev_slip_preview_container').classList.remove('hidden');
-                } else if (type === 'exp_bill') {
-                    tempExpBillBase64 = base64;
-                    document.getElementById('exp_bill_preview').src = base64;
-                    document.getElementById('exp_bill_preview_container').classList.add('hidden');
                 }
             });
         }
@@ -1037,6 +1011,19 @@
             });
         }
 
+        // ดึงข้อมูลประวัติจาก Firestore แบบ Real-time
+        function listenRecordsRealtime() {
+            db.collection("records").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+                let records = [];
+                snapshot.forEach(doc => {
+                    records.push({ id: doc.id, ...doc.data() });
+                });
+                window.cachedRecords = records;
+                renderTable();
+                renderIncomeTable();
+            });
+        }
+
         function switchAuthTab(tab) {
             const tabLogin = document.getElementById('tab-login');
             const tabReg = document.getElementById('tab-register');
@@ -1151,6 +1138,153 @@
             }
         }
 
+        function renderIncomeTable() {
+            let records = window.cachedRecords || [];
+            const tbody = document.getElementById('incomeDailyList');
+            const bigTotalElem = document.getElementById('income_big_total');
+            const subWageElem = document.getElementById('income_sub_wage');
+            const subAdvElem = document.getElementById('income_sub_advance');
+            const filterEmpSelect = document.getElementById('income_filter_emp');
+            const printEmpName = document.getElementById('print_emp_name');
+
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
+            const isManagerOrAdmin = currentUser.isAdmin || (currentUser.position && (currentUser.position.includes('ผู้จัดการ') || currentUser.position.includes('ฝ่ายบัญชี')));
+            const selectedEmp = filterEmpSelect ? filterEmpSelect.value : (isManagerOrAdmin ? 'ALL' : currentUser.name);
+
+            if (printEmpName) {
+                printEmpName.innerText = (selectedEmp === 'ALL' || !selectedEmp) ? 'แสดงพนักงานทุกคน' : selectedEmp;
+            }
+
+            let payrollItems = records.filter(item => item.category === 'ค่าแรงพนักงาน');
+            let advanceItems = records.filter(item => item.category === 'เบิกเงิน' && item.status === 'อนุมัติแล้ว');
+
+            if (isManagerOrAdmin) {
+                if (selectedEmp && selectedEmp !== 'ALL') {
+                    payrollItems = payrollItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp || (item.detail && item.detail.includes(selectedEmp)));
+                    advanceItems = advanceItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp);
+                }
+            } else {
+                payrollItems = payrollItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name || (item.detail && item.detail.includes(currentUser.name)));
+                advanceItems = advanceItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name);
+            }
+
+            let dailyEntries = [];
+
+            payrollItems.forEach(item => {
+                let empName = item.targetEmployee || item.creator || 'พนักงาน';
+                dailyEntries.push({
+                    date: item.date,
+                    empName: empName,
+                    type: 'ค่าแรง',
+                    detail: item.detail,
+                    amount: item.amount || 0,
+                    isDeduction: false
+                });
+            });
+
+            advanceItems.forEach(item => {
+                let empName = item.targetEmployee || item.creator || 'พนักงาน';
+                dailyEntries.push({
+                    date: item.date,
+                    empName: empName,
+                    type: 'หักเบิก (อนุมัติแล้ว)',
+                    detail: item.detail,
+                    amount: item.amount || 0,
+                    isDeduction: true
+                });
+            });
+
+            dailyEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            let totalWage = 0;
+            let totalAdvance = 0;
+
+            dailyEntries.forEach(entry => {
+                if (entry.isDeduction) totalAdvance += entry.amount;
+                else totalWage += entry.amount;
+            });
+
+            let netTotal = totalWage - totalAdvance;
+
+            if (bigTotalElem) {
+                bigTotalElem.innerText = `${netTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+            }
+            if (subWageElem) subWageElem.innerText = `${totalWage.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+            if (subAdvElem) subAdvElem.innerText = `-${totalAdvance.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+
+            if (dailyEntries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายได้ค้างจ่ายหรือยอดเบิก</td></tr>`;
+                return;
+            }
+
+            dailyEntries.forEach(item => {
+                const tr = document.createElement('tr');
+                const badgeClass = item.isDeduction ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800';
+                const amtClass = item.isDeduction ? 'text-amber-700 font-semibold' : 'text-blue-700 font-semibold';
+                const sign = item.isDeduction ? '-' : '+';
+
+                tr.innerHTML = `
+                    <td class="p-3 text-xs sm:text-sm whitespace-nowrap text-gray-600 border-b">${item.date}</td>
+                    <td class="p-3 text-xs sm:text-sm font-medium text-blue-950 border-b">${item.empName}</td>
+                    <td class="p-3 border-b"><span class="text-[11px] font-medium px-2 py-0.5 rounded-full ${badgeClass}">${item.type}</span></td>
+                    <td class="p-3 text-xs text-gray-500 border-b">${item.detail || '-'}</td>
+                    <td class="p-3 text-right text-xs sm:text-sm ${amtClass} border-b">${sign}${item.amount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderWageSettingTable() {
+            const tbody = document.getElementById('wageSettingList');
+            if (!tbody) return;
+            db.collection("employees").where("is_approved", "==", true).get().then(snapshot => {
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">ยังไม่มีรายชื่อพนักงานที่อนุมัติ</td></tr>`;
+                    return;
+                }
+                let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
+                snapshot.forEach(doc => {
+                    let emp = doc.data();
+                    let currentWage = employeeWages[emp.name] !== undefined ? employeeWages[emp.name] : 500;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${emp.name}</td>
+                        <td class="p-3 text-gray-500">${emp.position}</td>
+                        <td class="p-3 text-right">
+                            <input type="number" id="wage_input_${doc.id}" value="${currentWage}" class="w-28 border rounded-lg px-2.5 py-1.5 text-right text-xs sm:text-sm font-bold text-blue-700 bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
+                        </td>
+                        <td class="p-3 text-center">
+                            <button type="button" onclick="saveEmployeeWage('${emp.name}', '${doc.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg transition shadow-sm font-semibold">บันทึกเรท</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function saveEmployeeWage(empName, docId) {
+            let inputElem = document.getElementById(`wage_input_${docId}`);
+            let val = inputElem ? parseFloat(inputElem.value) || 0 : 500;
+            let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
+            employeeWages[empName] = val;
+            localStorage.setItem('tkp7_employee_wages', JSON.stringify(employeeWages));
+            alert(`✅ บันทึกเรทค่าแรงของ "${empName}" เป็น ${val} บาท/วัน สำเร็จ!`);
+            fillDefaultWage();
+        }
+
+        function fillDefaultWage() {
+            const nameSelect = document.getElementById('p_name');
+            const amountInput = document.getElementById('p_amount');
+            if (!nameSelect || !amountInput) return;
+            let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
+            let selectedName = nameSelect.value;
+            amountInput.value = employeeWages[selectedName] !== undefined ? employeeWages[selectedName] : 500;
+        }
+
         function startCamera() {
             const video = document.getElementById('videoElement');
             const placeholder = document.getElementById('camera-placeholder');
@@ -1188,60 +1322,88 @@
             document.getElementById('btn-save-attendance').classList.add('hidden');
         }
 
-        function saveAttendance() {
+        async function saveAttendance() {
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
-            const record = { id: Date.now(), category: 'สแกนหน้าเข้างาน', date: new Date().toISOString().split('T')[0], creator: currentUser.name || 'พนักงาน', targetEmployee: currentUser.name || 'พนักงาน', detail: 'เช็คอินเข้างาน', amount: 0, status: 'สำเร็จ' };
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ เช็คอินเข้างานสำเร็จ!');
+            const record = { 
+                category: 'สแกนหน้าเข้างาน', 
+                date: new Date().toISOString().split('T')[0], 
+                creator: currentUser.name || 'พนักงาน', 
+                targetEmployee: currentUser.name || 'พนักงาน', 
+                detail: 'เช็คอินเข้างาน', 
+                amount: 0, 
+                status: 'สำเร็จ',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+            };
+            await db.collection("records").add(record);
+            alert('✅ เช็คอินเข้างานสำเร็จและบันทึกขึ้น Cloud แล้ว!');
             retakePhoto();
         }
 
-        function saveAdvanceRequest(e) {
+        async function saveAdvanceRequest(e) {
             e.preventDefault();
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const date = document.getElementById('adv_date').value;
             const amount = parseFloat(document.getElementById('adv_amount').value) || 0;
             const reason = document.getElementById('adv_reason').value;
-            const record = { id: Date.now(), category: 'เบิกเงิน', date: date, creator: currentUser.name || 'พนักงาน', targetEmployee: currentUser.name || 'พนักงาน', detail: `ขอเบิกเงิน: ${reason}`, amount: amount, status: 'รออนุมัติ' };
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งคำขอเบิกเงินเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
+            const record = { 
+                category: 'เบิกเงิน', 
+                date: date, 
+                creator: currentUser.name || 'พนักงาน', 
+                targetEmployee: currentUser.name || 'พนักงาน', 
+                detail: `ขอเบิกเงิน: ${reason}`, 
+                amount: amount, 
+                status: 'รออนุมัติ',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            await db.collection("records").add(record);
+            alert('✅ ส่งคำขอเบิกเงินขึ้น Cloud เรียบร้อยแล้ว');
             document.getElementById('formAdvance').reset();
         }
 
-        function saveReimburseRequest(e) {
+        async function saveReimburseRequest(e) {
             e.preventDefault();
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const date = document.getElementById('reimb_date').value;
             const amount = parseFloat(document.getElementById('reimb_amount').value) || 0;
             const reason = document.getElementById('reimb_reason').value;
-            const record = { id: Date.now(), category: 'สำรองจ่าย', date: date, creator: currentUser.name || 'พนักงาน', targetEmployee: currentUser.name || 'พนักงาน', detail: `สำรองจ่าย: ${reason}`, amount: amount, status: 'รออนุมัติ' };
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งบันทึกสำรองจ่ายเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
+            const record = { 
+                category: 'สำรองจ่าย', 
+                date: date, 
+                creator: currentUser.name || 'พนักงาน', 
+                targetEmployee: currentUser.name || 'พนักงาน', 
+                detail: `สำรองจ่าย: ${reason}`, 
+                amount: amount, 
+                status: 'รออนุมัติ',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            await db.collection("records").add(record);
+            alert('✅ ส่งบันทึกสำรองจ่ายขึ้น Cloud เรียบร้อยแล้ว');
             document.getElementById('formReimburse').reset();
         }
 
-        function saveLeaveRequest(e) {
+        async function saveLeaveRequest(e) {
             e.preventDefault();
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const start = document.getElementById('leave_start').value;
             const end = document.getElementById('leave_end').value;
             const type = document.getElementById('leave_type').value;
             const reason = document.getElementById('leave_reason').value;
-            const record = { id: Date.now(), category: 'ขอลา', date: `${start} ถึง ${end}`, creator: currentUser.name || 'พนักงาน', targetEmployee: currentUser.name || 'พนักงาน', detail: `ลา [${type}]: ${reason}`, amount: 0, status: 'รออนุมัติ' };
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งใบคำขอเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
+            const record = { 
+                category: 'ขอลา', 
+                date: `${start} ถึง ${end}`, 
+                creator: currentUser.name || 'พนักงาน', 
+                targetEmployee: currentUser.name || 'พนักงาน', 
+                detail: `ลา [${type}]: ${reason}`, 
+                amount: 0, 
+                status: 'รออนุมัติ',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            await db.collection("records").add(record);
+            alert('✅ ส่งใบคำขอลาขึ้น Cloud เรียบร้อยแล้ว');
             document.getElementById('formLeave').reset();
         }
 
-        function savePayroll(e) {
+        async function savePayroll(e) {
             e.preventDefault();
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const date = document.getElementById('p_date').value;
@@ -1255,25 +1417,22 @@
             }
 
             const record = {
-                id: Date.now() + Math.random(),
                 category: 'ค่าแรงพนักงาน',
                 creator: currentUser.name || 'ผู้จัดการ',
                 targetEmployee: targetEmployee,
                 date: date,
                 detail: `${targetEmployee} (${type} - บันทึกโดย ${currentUser.name || 'Admin'})`,
                 amount: amount,
-                status: 'อนุมัติแล้ว'
+                status: 'อนุมัติแล้ว',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-
+            await db.collection("records").add(record);
             document.getElementById('formPayroll').reset();
             document.getElementById('p_date').value = new Date().toISOString().split('T')[0];
             fillDefaultWage();
 
-            alert('✅ บันทึกค่าแรงสำเร็จ!');
+            alert('✅ บันทึกค่าแรงขึ้น Cloud สำเร็จ!');
         }
 
         function initAiBackgroundScheduler() {
@@ -1300,35 +1459,33 @@
             const now = new Date();
             const todayDateStr = now.toISOString().split('T')[0];
             aiAutoRunDailyPayroll(todayDateStr);
-            alert('🤖 AI บันทึกค่าแรงอัตโนมัติประจำวันนี้เรียบร้อยแล้ว');
+            alert('🤖 AI บันทึกค่าแรงอัตโนมัติขึ้น Cloud ประจำวันนี้เรียบร้อยแล้ว');
         }
 
         function aiAutoRunDailyPayroll(dateString) {
             db.collection("employees").where("is_approved", "==", true).get().then(snapshot => {
                 if (snapshot.empty) return;
                 let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
-                let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
 
                 snapshot.forEach(doc => {
                     let emp = doc.data();
                     let wageAmount = employeeWages[emp.name] !== undefined ? employeeWages[emp.name] : 500;
                     const data = {
-                        id: Date.now() + Math.random(),
                         category: 'ค่าแรงพนักงาน',
                         creator: '🤖 AI อัตโนมัติ (12:00 น.)',
                         targetEmployee: emp.name,
                         date: dateString,
                         detail: `${emp.name} (รายวัน - AI จ่ายอัตโนมัติ)`,
                         amount: wageAmount,
-                        status: 'อนุมัติแล้ว'
+                        status: 'อนุมัติแล้ว',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     };
-                    records.unshift(data);
+                    db.collection("records").add(data);
                 });
-                localStorage.setItem('tkp7_records', JSON.stringify(records));
             });
         }
         
-        function saveFuel(e) {
+        async function saveFuel(e) {
             e.preventDefault();
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const date = document.getElementById('f_date').value;
@@ -1338,81 +1495,79 @@
             const end = document.getElementById('f_mile_end').value;
 
             const record = {
-                id: Date.now(),
                 category: 'ค่าน้ำมันรถ',
                 creator: currentUser.name || 'พนักงาน',
                 targetEmployee: currentUser.name || 'พนักงาน',
                 date: date,
                 detail: `ค่าน้ำมันรถ (${fuelType}) ไมล์ ${start} -> ${end}`,
                 amount: amount,
-                status: 'ปกติ'
+                status: 'ปกติ',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            records.unshift(record);
-            localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ บันทึกค่าน้ำมันสำเร็จ!');
+            await db.collection("records").add(record);
+            alert('✅ บันทึกค่าน้ำมันขึ้น Cloud สำเร็จ!');
             document.getElementById('formFuel').reset();
             onFuelTypeChange();
         }
 
-        function saveRevenue(e) {
+        async function saveRevenue(e) {
             e.preventDefault();
             const date = document.getElementById('rev_date').value;
             const category = document.getElementById('rev_category').value;
             const amount = parseFloat(document.getElementById('rev_amount').value) || 0;
             const detail = document.getElementById('rev_detail').value;
-            let revenues = JSON.parse(localStorage.getItem('tkp7_revenues')) || [];
-            revenues.unshift({ id: Date.now(), date, category, amount, detail });
-            localStorage.setItem('tkp7_revenues', JSON.stringify(revenues));
-            alert('✅ บันทึกรายรับสำเร็จ!');
+            await db.collection("revenues").add({ date, category, amount, detail, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            alert('✅ บันทึกรายรับขึ้น Cloud สำเร็จ!');
             document.getElementById('formRevenue').reset();
             renderRevenueTable();
         }
 
         function renderRevenueTable() {
-            const tbody = document.getElementById('revenueList');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            let revenues = JSON.parse(localStorage.getItem('tkp7_revenues')) || [];
-            if (revenues.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายรับ</td></tr>';
-                return;
-            }
-            revenues.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="p-3">${r.date}</td><td class="p-3">${r.category}</td><td class="p-3">${r.detail}</td><td class="p-3">-</td><td class="p-3 text-right text-emerald-700 font-bold">+${r.amount.toLocaleString()} ฿</td><td class="p-3 text-center">-</td>`;
-                tbody.appendChild(tr);
+            db.collection("revenues").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                const tbody = document.getElementById('revenueList');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายรับ</td></tr>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const r = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="p-3">${r.date}</td><td class="p-3">${r.category}</td><td class="p-3">${r.detail}</td><td class="p-3">-</td><td class="p-3 text-right text-emerald-700 font-bold">+${(r.amount || 0).toLocaleString()} ฿</td><td class="p-3 text-center"><button type="button" onclick="db.collection('revenues').doc('${doc.id}').delete()" class="bg-red-500 text-white text-xs px-2 py-1 rounded">ลบ</button></td>`;
+                    tbody.appendChild(tr);
+                });
             });
         }
 
-        function saveExpense(e) {
+        async function saveExpense(e) {
             e.preventDefault();
             const date = document.getElementById('exp_date').value;
             const category = document.getElementById('exp_category').value;
             const amount = parseFloat(document.getElementById('exp_net_amount').value) || 0;
             const detail = document.getElementById('exp_detail').value;
-            let expenses = JSON.parse(localStorage.getItem('tkp7_expenses')) || [];
-            expenses.unshift({ id: Date.now(), date, category, amount, detail });
-            localStorage.setItem('tkp7_expenses', JSON.stringify(expenses));
-            alert('✅ บันทึกรายจ่ายสำเร็จ!');
+            await db.collection("expenses").add({ date, category, amount, detail, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            alert('✅ บันทึกรายจ่ายขึ้น Cloud สำเร็จ!');
             document.getElementById('formExpense').reset();
             renderExpenseTable();
         }
 
         function renderExpenseTable() {
-            const tbody = document.getElementById('expenseList');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            let expenses = JSON.parse(localStorage.getItem('tkp7_expenses')) || [];
-            if (expenses.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายจ่าย</td></tr>';
-                return;
-            }
-            expenses.forEach(e => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="p-3">${e.date}</td><td class="p-3">${e.category}</td><td class="p-3">${e.detail}</td><td class="p-3 text-right text-red-700 font-bold">-${e.amount.toLocaleString()} ฿</td><td class="p-3 text-center">-</td>`;
-                tbody.appendChild(tr);
+            db.collection("expenses").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                const tbody = document.getElementById('expenseList');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายจ่าย</td></tr>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const e = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td class="p-3">${e.date}</td><td class="p-3">${e.category}</td><td class="p-3">${e.detail}</td><td class="p-3 text-right text-red-700 font-bold">-${(e.amount || 0).toLocaleString()} ฿</td><td class="p-3 text-center"><button type="button" onclick="db.collection('expenses').doc('${doc.id}').delete()" class="bg-red-500 text-white text-xs px-2 py-1 rounded">ลบ</button></td>`;
+                    tbody.appendChild(tr);
+                });
             });
         }
 
@@ -1430,7 +1585,7 @@
         }
 
         function renderTable() {
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
+            let records = window.cachedRecords || [];
             const tbody = document.getElementById('historyList');
             if (!tbody) return;
             tbody.innerHTML = '';
@@ -1443,7 +1598,7 @@
             else if (currentHistoryFilter === 'fuel') filtered = records.filter(r => r.category === 'ค่าน้ำมันรถ');
 
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีประวัติในหมวดหมู่นี้</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีประวัติในหมวดหมู่นี้บน Cloud</td></tr>';
                 return;
             }
 
@@ -1453,18 +1608,18 @@
             filtered.forEach(item => {
                 const tr = document.createElement('tr');
                 
-                let actionHtml = `<button type="button" onclick="deleteRecord(${item.id})" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>`;
+                let actionHtml = `<button type="button" onclick="deleteRecord('${item.id}')" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>`;
 
                 if (isAdmin && (item.category === 'เบิกเงิน' || item.category === 'สำรองจ่าย' || item.category === 'ขอลา')) {
                     let currentStatus = item.status || 'รออนุมัติ';
                     actionHtml = `
                         <div class="flex items-center justify-center gap-1.5">
-                            <select onchange="updateRecordStatusDropdown(${item.id}, this.value)" class="text-xs border rounded-lg px-2 py-1 bg-white font-medium focus:ring-1 focus:ring-blue-500">
+                            <select onchange="updateRecordStatusCloud('${item.id}', this.value)" class="text-xs border rounded-lg px-2 py-1 bg-white font-medium focus:ring-1 focus:ring-blue-500">
                                 <option value="รออนุมัติ" ${currentStatus === 'รออนุมัติ' ? 'selected' : ''}>⏳ รออนุมัติ</option>
                                 <option value="อนุมัติแล้ว" ${currentStatus === 'อนุมัติแล้ว' ? 'selected' : ''}>✅ อนุมัติแล้ว</option>
                                 <option value="ไม่อนุมัติ" ${currentStatus === 'ไม่อนุมัติ' ? 'selected' : ''}>❌ ไม่อนุมัติ</option>
                             </select>
-                            <button type="button" onclick="deleteRecord(${item.id})" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>
+                            <button type="button" onclick="deleteRecord('${item.id}')" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>
                         </div>
                     `;
                 } else if (item.status && item.status !== 'ปกติ' && item.status !== 'สำเร็จ') {
@@ -1483,25 +1638,22 @@
             });
         }
 
-        function updateRecordStatusDropdown(id, newStatus) {
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            let item = records.find(r => r.id === id);
-            if (item) {
-                item.status = newStatus;
-                localStorage.setItem('tkp7_records', JSON.stringify(records));
-                renderTable();
-                renderIncomeTable();
-                alert(`✅ เปลี่ยนสถานะเป็น "${newStatus}" เรียบร้อยแล้ว`);
+        async function updateRecordStatusCloud(id, newStatus) {
+            try {
+                await db.collection("records").doc(id).update({ status: newStatus });
+                alert(`✅ อัปเดตสถานะบน Cloud เป็น "${newStatus}" เรียบร้อยแล้ว`);
+            } catch (err) {
+                alert('เกิดข้อผิดพลาด: ' + err.message);
             }
         }
 
-        function deleteRecord(id) {
-            if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
-                let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-                records = records.filter(item => item.id !== id);
-                localStorage.setItem('tkp7_records', JSON.stringify(records));
-                renderTable();
-                renderIncomeTable();
+        async function deleteRecord(id) {
+            if (confirm('คุณต้องการลบรายการนี้ออกจาก Cloud ใช่หรือไม่?')) {
+                try {
+                    await db.collection("records").doc(id).delete();
+                } catch (err) {
+                    alert('เกิดข้อผิดพลาด: ' + err.message);
+                }
             }
         }
 
