@@ -368,7 +368,7 @@
                     </form>
                 </section>
 
-                <!-- 1. ฟอร์มค่าแรง & เรทเซ็ตติ้ง -->
+                <!-- 1. ฟอร์มค่าแรง -->
                 <section id="section-payroll" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
                         <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2">
@@ -476,23 +476,14 @@
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 ถ่ายรูปไมล์เริ่มต้น</label>
                                 <input type="file" id="f_img_start" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_start')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
-                                <div id="mile_start_preview_container" class="mt-2 hidden text-center">
-                                    <img id="mile_start_preview" class="max-h-24 mx-auto rounded border" alt="ไมล์เริ่ม">
-                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 ถ่ายรูปไมล์สิ้นสุด</label>
                                 <input type="file" id="f_img_end" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_end')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
-                                <div id="mile_end_preview_container" class="mt-2 hidden text-center">
-                                    <img id="mile_end_preview" class="max-h-24 mx-auto rounded border" alt="ไมล์จบ">
-                                </div>
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">🧾 ถ่ายรูปบิลกำกับภาษี</label>
                                 <input type="file" id="f_img_bill" accept="image/*" capture="environment" onchange="previewImage(event, 'bill')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
-                                <div id="bill_preview_container" class="mt-2 hidden text-center">
-                                    <img id="bill_preview" class="max-h-24 mx-auto rounded border" alt="บิลน้ำมัน">
-                                </div>
                             </div>
 
                             <div class="sm:col-span-2 bg-emerald-50 border border-emerald-200 p-3 rounded-xl grid grid-cols-3 gap-2 text-center">
@@ -1011,7 +1002,6 @@
             });
         }
 
-        // ดึงข้อมูลประวัติจาก Firestore แบบ Real-time
         function listenRecordsRealtime() {
             db.collection("records").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
                 let records = [];
@@ -1054,7 +1044,7 @@
             const backdrop = document.getElementById('sidebar-backdrop');
             if (open) {
                 if (sidebar) sidebar.classList.remove('-translate-x-full');
-                if (backdrop) backdrop.classList.remove('hidden');
+                if (backdrop) backdrop.classList.add('hidden');
             } else {
                 if (sidebar) sidebar.classList.add('-translate-x-full');
                 if (backdrop) backdrop.classList.add('hidden');
@@ -1335,7 +1325,7 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp() 
             };
             await db.collection("records").add(record);
-            alert('✅ เช็คอินเข้างานสำเร็จและบันทึกขึ้น Cloud แล้ว!');
+            alert('✅ เช็คอินเข้างานสำเร็จ!');
             retakePhoto();
         }
 
