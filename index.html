@@ -1002,8 +1002,9 @@
             });
         }
 
+        // ดึงข้อมูลประวัติจาก Firestore แบบ Real-time โดยไม่ใช้ orderBy ป้องกันปัญหาข้อมูลไม่แสดง
         function listenRecordsRealtime() {
-            db.collection("records").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+            db.collection("records").onSnapshot((snapshot) => {
                 let records = [];
                 snapshot.forEach(doc => {
                     records.push({ id: doc.id, ...doc.data() });
@@ -1514,7 +1515,7 @@
         }
 
         function renderRevenueTable() {
-            db.collection("revenues").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            db.collection("revenues").onSnapshot(snapshot => {
                 const tbody = document.getElementById('revenueList');
                 if (!tbody) return;
                 tbody.innerHTML = '';
@@ -1544,7 +1545,7 @@
         }
 
         function renderExpenseTable() {
-            db.collection("expenses").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            db.collection("expenses").onSnapshot(snapshot => {
                 const tbody = document.getElementById('expenseList');
                 if (!tbody) return;
                 tbody.innerHTML = '';
@@ -1689,7 +1690,7 @@
                 loadApprovedEmployeesToDropdown();
                 loadApprovedEmployeesToDropdownForIncome();
             } else {
-                authView.classList.remove('hidden');
+                authView.classList.add('hidden');
                 appView.classList.add('hidden');
             }
         }
