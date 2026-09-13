@@ -279,7 +279,7 @@
                     </div>
                 </section>
 
-                <!-- เมนูเบิกเงิน -->
+                <!-- เมนูขอเบิกเงิน -->
                 <section id="section-advance" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <h2 class="text-base sm:text-lg font-bold mb-4 text-amber-900 flex items-center gap-2">
                         <span>💸</span> ฟอร์มขอเบิกเงินล่วงหน้า / ยืมเงิน
@@ -335,7 +335,7 @@
                     </form>
                 </section>
 
-                <!-- เมนูขอลา -->
+                <!-- เมนูยื่นใบลา -->
                 <section id="section-leave" class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 hidden">
                     <h2 class="text-base sm:text-lg font-bold mb-4 text-teal-900 flex items-center gap-2">
                         <span>📅</span> ฟอร์มยื่นใบลา / แจ้งลาออก
@@ -1151,153 +1151,6 @@
             }
         }
 
-        function renderIncomeTable() {
-            let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
-            const tbody = document.getElementById('incomeDailyList');
-            const bigTotalElem = document.getElementById('income_big_total');
-            const subWageElem = document.getElementById('income_sub_wage');
-            const subAdvElem = document.getElementById('income_sub_advance');
-            const filterEmpSelect = document.getElementById('income_filter_emp');
-            const printEmpName = document.getElementById('print_emp_name');
-
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
-            const isManagerOrAdmin = currentUser.isAdmin || (currentUser.position && (currentUser.position.includes('ผู้จัดการ') || currentUser.position.includes('ฝ่ายบัญชี')));
-            const selectedEmp = filterEmpSelect ? filterEmpSelect.value : (isManagerOrAdmin ? 'ALL' : currentUser.name);
-
-            if (printEmpName) {
-                printEmpName.innerText = (selectedEmp === 'ALL' || !selectedEmp) ? 'แสดงพนักงานทุกคน' : selectedEmp;
-            }
-
-            let payrollItems = records.filter(item => item.category === 'ค่าแรงพนักงาน');
-            let advanceItems = records.filter(item => item.category === 'เบิกเงิน' && item.status === 'อนุมัติแล้ว');
-
-            if (isManagerOrAdmin) {
-                if (selectedEmp && selectedEmp !== 'ALL') {
-                    payrollItems = payrollItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp || (item.detail && item.detail.includes(selectedEmp)));
-                    advanceItems = advanceItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp);
-                }
-            } else {
-                payrollItems = payrollItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name || (item.detail && item.detail.includes(currentUser.name)));
-                advanceItems = advanceItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name);
-            }
-
-            let dailyEntries = [];
-
-            payrollItems.forEach(item => {
-                let empName = item.targetEmployee || item.creator || 'พนักงาน';
-                dailyEntries.push({
-                    date: item.date,
-                    empName: empName,
-                    type: 'ค่าแรง',
-                    detail: item.detail,
-                    amount: item.amount || 0,
-                    isDeduction: false
-                });
-            });
-
-            advanceItems.forEach(item => {
-                let empName = item.targetEmployee || item.creator || 'พนักงาน';
-                dailyEntries.push({
-                    date: item.date,
-                    empName: empName,
-                    type: 'หักเบิก (อนุมัติแล้ว)',
-                    detail: item.detail,
-                    amount: item.amount || 0,
-                    isDeduction: true
-                });
-            });
-
-            dailyEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            let totalWage = 0;
-            let totalAdvance = 0;
-
-            dailyEntries.forEach(entry => {
-                if (entry.isDeduction) totalAdvance += entry.amount;
-                else totalWage += entry.amount;
-            });
-
-            let netTotal = totalWage - totalAdvance;
-
-            if (bigTotalElem) {
-                bigTotalElem.innerText = `${netTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-            }
-            if (subWageElem) subWageElem.innerText = `${totalWage.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-            if (subAdvElem) subAdvElem.innerText = `-${totalAdvance.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
-
-            if (dailyEntries.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายการรายได้ค้างจ่ายหรือยอดเบิก</td></tr>`;
-                return;
-            }
-
-            dailyEntries.forEach(item => {
-                const tr = document.createElement('tr');
-                const badgeClass = item.isDeduction ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800';
-                const amtClass = item.isDeduction ? 'text-amber-700 font-semibold' : 'text-blue-700 font-semibold';
-                const sign = item.isDeduction ? '-' : '+';
-
-                tr.innerHTML = `
-                    <td class="p-3 text-xs sm:text-sm whitespace-nowrap text-gray-600 border-b">${item.date}</td>
-                    <td class="p-3 text-xs sm:text-sm font-medium text-blue-950 border-b">${item.empName}</td>
-                    <td class="p-3 border-b"><span class="text-[11px] font-medium px-2 py-0.5 rounded-full ${badgeClass}">${item.type}</span></td>
-                    <td class="p-3 text-xs text-gray-500 border-b">${item.detail || '-'}</td>
-                    <td class="p-3 text-right text-xs sm:text-sm ${amtClass} border-b">${sign}${item.amount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderWageSettingTable() {
-            const tbody = document.getElementById('wageSettingList');
-            if (!tbody) return;
-            db.collection("employees").where("is_approved", "==", true).get().then(snapshot => {
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">ยังไม่มีรายชื่อพนักงานที่อนุมัติ</td></tr>`;
-                    return;
-                }
-                let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
-                snapshot.forEach(doc => {
-                    let emp = doc.data();
-                    let currentWage = employeeWages[emp.name] !== undefined ? employeeWages[emp.name] : 500;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="p-3 font-medium">${emp.name}</td>
-                        <td class="p-3 text-gray-500">${emp.position}</td>
-                        <td class="p-3 text-right">
-                            <input type="number" id="wage_input_${doc.id}" value="${currentWage}" class="w-28 border rounded-lg px-2.5 py-1.5 text-right text-xs sm:text-sm font-bold text-blue-700 bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-500">
-                        </td>
-                        <td class="p-3 text-center">
-                            <button type="button" onclick="saveEmployeeWage('${emp.name}', '${doc.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg transition shadow-sm font-semibold">บันทึกเรท</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
-
-        function saveEmployeeWage(empName, docId) {
-            let inputElem = document.getElementById(`wage_input_${docId}`);
-            let val = inputElem ? parseFloat(inputElem.value) || 0 : 500;
-            let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
-            employeeWages[empName] = val;
-            localStorage.setItem('tkp7_employee_wages', JSON.stringify(employeeWages));
-            alert(`✅ บันทึกเรทค่าแรงของ "${empName}" เป็น ${val} บาท/วัน สำเร็จ!`);
-            fillDefaultWage();
-        }
-
-        function fillDefaultWage() {
-            const nameSelect = document.getElementById('p_name');
-            const amountInput = document.getElementById('p_amount');
-            if (!nameSelect || !amountInput) return;
-            let employeeWages = JSON.parse(localStorage.getItem('tkp7_employee_wages')) || {};
-            let selectedName = nameSelect.value;
-            amountInput.value = employeeWages[selectedName] !== undefined ? employeeWages[selectedName] : 500;
-        }
-
         function startCamera() {
             const video = document.getElementById('videoElement');
             const placeholder = document.getElementById('camera-placeholder');
@@ -1337,7 +1190,7 @@
 
         function saveAttendance() {
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
-            const record = { id: Date.now(), category: 'สแกนหน้าเข้างาน', date: new Date().toISOString().split('T')[0], creator: currentUser.name || 'พนักงาน', detail: 'เช็คอินเข้างาน', amount: 0, status: 'สำเร็จ' };
+            const record = { id: Date.now(), category: 'สแกนหน้าเข้างาน', date: new Date().toISOString().split('T')[0], creator: currentUser.name || 'พนักงาน', targetEmployee: currentUser.name || 'พนักงาน', detail: 'เช็คอินเข้างาน', amount: 0, status: 'สำเร็จ' };
             let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
             records.unshift(record);
             localStorage.setItem('tkp7_records', JSON.stringify(records));
@@ -1355,7 +1208,7 @@
             let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
             records.unshift(record);
             localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งคำขอเบิกเงินเรียบร้อยแล้ว');
+            alert('✅ ส่งคำขอเบิกเงินเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
             document.getElementById('formAdvance').reset();
         }
 
@@ -1369,7 +1222,7 @@
             let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
             records.unshift(record);
             localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งบันทึกสำรองจ่ายเรียบร้อยแล้ว');
+            alert('✅ ส่งบันทึกสำรองจ่ายเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
             document.getElementById('formReimburse').reset();
         }
 
@@ -1384,7 +1237,7 @@
             let records = JSON.parse(localStorage.getItem('tkp7_records')) || [];
             records.unshift(record);
             localStorage.setItem('tkp7_records', JSON.stringify(records));
-            alert('✅ ส่งใบคำขอเรียบร้อยแล้ว');
+            alert('✅ ส่งใบคำขอเรียบร้อยแล้ว (ข้อมูลถูกบันทึกไปที่ประวัติรายการทั้งหมดแล้ว)');
             document.getElementById('formLeave').reset();
         }
 
@@ -1420,7 +1273,7 @@
             document.getElementById('p_date').value = new Date().toISOString().split('T')[0];
             fillDefaultWage();
 
-            alert('✅ บันทึกค่าแรงสำเร็จ! ยอดเงินได้ถูกส่งไปแสดงในหน้ารายได้ค้างจ่ายสุทธิแล้ว');
+            alert('✅ บันทึกค่าแรงสำเร็จ!');
         }
 
         function initAiBackgroundScheduler() {
@@ -1488,6 +1341,7 @@
                 id: Date.now(),
                 category: 'ค่าน้ำมันรถ',
                 creator: currentUser.name || 'พนักงาน',
+                targetEmployee: currentUser.name || 'พนักงาน',
                 date: date,
                 detail: `ค่าน้ำมันรถ (${fuelType}) ไมล์ ${start} -> ${end}`,
                 amount: amount,
@@ -1637,7 +1491,7 @@
                 localStorage.setItem('tkp7_records', JSON.stringify(records));
                 renderTable();
                 renderIncomeTable();
-                alert(`✅ เปลี่ยนสถานะเป็น "${newStatus}" เรียบร้อยแล้ว (ระบบบัญชีปรับยอดอัตโนมัติ)`);
+                alert(`✅ เปลี่ยนสถานะเป็น "${newStatus}" เรียบร้อยแล้ว`);
             }
         }
 
