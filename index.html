@@ -303,7 +303,6 @@
                                 <input type="number" step="0.01" id="adv_amount" placeholder="0.00" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500">
                             </div>
                             
-                            <!-- เพิ่ม checkbox สำหรับเบิกค่าน้ำมัน -->
                             <div class="sm:col-span-2 bg-amber-50 border border-amber-200 p-3 rounded-xl flex items-center gap-3">
                                 <input type="checkbox" id="adv_is_fuel" onchange="toggleAdvanceFuelUpload()" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500 border-gray-300">
                                 <label for="adv_is_fuel" class="text-xs sm:text-sm font-bold text-amber-900 cursor-pointer">⛽ เป็นรายการเบิกค่าน้ำมัน (ต้องแนบเอกสารหลักฐาน)</label>
@@ -314,7 +313,6 @@
                                 <textarea id="adv_reason" rows="2" placeholder="ระบุเหตุผล เช่น ค่าใช้จ่ายหน้างาน ค่าเดินทาง..." required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500"></textarea>
                             </div>
 
-                            <!-- ส่วนแนบเอกสารสำหรับเบิกค่าน้ำมัน -->
                             <div id="adv_fuel_upload_container" class="sm:col-span-2 hidden bg-gray-50 border border-dashed border-amber-300 p-3 rounded-xl">
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 แนบเอกสาร / รูปภาพใบเสร็จค่าน้ำมัน <span class="text-red-500">*</span></label>
                                 <input type="file" id="adv_img_bill" accept="image/*" capture="environment" onchange="previewImage(event, 'adv_bill')" class="w-full border bg-white rounded-xl p-2 text-xs text-gray-500">
@@ -478,7 +476,8 @@
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">อัตราสิ้นเปลือง (กม./ลิตรหรือหน่วย)</label>
-                                <input type="number" step="0.1" id="f_rate" value="12.0" oninput="calculateFuel()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white" placeholder="12.0">
+                                <input type="number" step="0.1" id="f_rate" value="12.0" oninput="calculateFuel()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-blue-700" placeholder="12.0" readonly>
+                                <span class="text-[11px] text-gray-400 mt-1 block">เฉพาะ Admin / ผู้จัดการ เปลี่ยนแปลงค่าอัตราสิ้นเปลืองได้</span>
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">เลขไมล์เริ่มต้น</label>
@@ -492,7 +491,7 @@
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">ราคากลางต่อหน่วย (บาท) [Kapook Gas]</label>
                                 <input type="number" step="0.01" id="f_price_custom" oninput="calculateFuel()" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white font-semibold text-emerald-700" placeholder="39.84">
-                                <span id="f_price_status" class="text-[11px] text-gray-400 mt-1 block">อัปเดตตามราคากลางล่าสุดจาก Kapook Gas Price</span>
+                                <span id="f_price_status" class="text-[11px] text-gray-400 mt-1 block">ราคากลางดึงอัตโนมัติจาก Kapook Gas (Admin/ผู้จัดการแก้ไขได้)</span>
                             </div>
                             <div>
                                 <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">จำนวนเงินรวม (บาท)</label>
@@ -500,16 +499,18 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 รูปไมล์เริ่มต้น</label>
-                                <input type="file" id="f_img_start" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_start')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 รูปไมล์เริ่มต้น <span class="text-red-500">*</span></label>
+                                <input type="file" id="f_img_start" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_start')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="mile_start_preview_container" class="mt-2 hidden text-center">
+                                    <span class="text-xs text-emerald-600 font-semibold block">✓ แนบรูปไมล์เริ่มต้นเรียบร้อย</span>
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 รูปไมล์สิ้นสุด</label>
-                                <input type="file" id="f_img_end" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_end')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">🧾 รูปบิลค่าน้ำมัน</label>
-                                <input type="file" id="f_img_bill" accept="image/*" capture="environment" onchange="previewImage(event, 'fuel_bill')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500">
+                                <label class="block text-xs sm:text-sm font-medium mb-1 text-gray-700">📸 รูปไมล์สิ้นสุด <span class="text-red-500">*</span></label>
+                                <input type="file" id="f_img_end" accept="image/*" capture="environment" onchange="previewImage(event, 'mile_end')" class="w-full border border-dashed border-gray-300 bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500" required>
+                                <div id="mile_end_preview_container" class="mt-2 hidden text-center">
+                                    <span class="text-xs text-emerald-600 font-semibold block">✓ แนบรูปไมล์สิ้นสุดเรียบร้อย</span>
+                                </div>
                             </div>
 
                             <div class="sm:col-span-2 bg-emerald-50 border border-emerald-200 p-3 rounded-xl grid grid-cols-3 gap-2 text-center">
@@ -558,7 +559,7 @@
                                 <h2 class="text-base sm:text-lg font-bold text-blue-950 flex items-center gap-2 mb-2 no-print">
                                     <span>💰</span> สรุปรายได้สะสมค้างจ่ายสุทธิ (ของฉัน)
                                 </h2>
-                                <p class="text-xs text-gray-500 mb-3 no-print">คำนวณจากค่าแรงทั้งหมด ลบด้วย ยอดขอเบิกเงินที่อนุมัติแล้ว</p>
+                                <p class="text-xs text-gray-500 mb-3 no-print">คำนวณจากค่าแรงและค่าน้ำมันที่อนุมัติแล้ว ลบด้วย ยอดขอเบิกเงินที่อนุมัติแล้ว</p>
                                 
                                 <div class="flex flex-wrap items-center gap-2 no-print">
                                     <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-1.5 hidden" id="admin_emp_filter_box">
@@ -576,7 +577,7 @@
                                 <span class="text-xs text-blue-200 font-medium block uppercase tracking-wider print:text-gray-700">ยอดเงินสะสมค้างจ่ายสุทธิ</span>
                                 <div class="text-2xl sm:text-3xl font-extrabold text-white mt-1 tracking-tight print:text-black" id="income_big_total">0.00 ฿</div>
                                 <div class="flex justify-end gap-3 mt-2 text-[11px] text-blue-200 pt-2 border-t border-blue-800/60 print:border-gray-300 print:text-gray-600">
-                                    <span>ค่าแรง: <b class="text-white print:text-black" id="income_sub_wage">0.00</b></span>
+                                    <span>รายรับรวม: <b class="text-white print:text-black" id="income_sub_wage">0.00</b></span>
                                     <span>หักเบิกที่อนุมัติ: <b class="text-amber-300 print:text-red-600" id="income_sub_advance">0.00</b></span>
                                 </div>
                             </div>
@@ -815,6 +816,39 @@
         </div>
     </div>
 
+    <!-- Modal แก้ไขข้อมูลผู้ใช้ -->
+    <div id="editUserModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+            <button type="button" onclick="closeEditUserModal()" class="absolute top-4 right-4 bg-red-500 text-white w-8 h-8 rounded-full font-bold flex items-center justify-center hover:bg-red-600 transition">✕</button>
+            <h3 class="text-lg font-bold text-blue-950 mb-4">✏️ แก้ไขข้อมูลพนักงาน</h3>
+            <form id="formEditUser" onsubmit="saveEditedUser(event)" class="space-y-3">
+                <input type="hidden" id="edit_phone_key">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">ชื่อ - นามสกุล</label>
+                    <input type="text" id="edit_name" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">ตำแหน่งงาน</label>
+                    <select id="edit_position" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="ช่างเทคนิคไฟฟ้า / EV Charger">ช่างเทคนิคไฟฟ้า / EV Charger</option>
+                        <option value="พนักงานขับรถ">พนักงานขับรถ</option>
+                        <option value="ฝ่ายบัญชี / แอดมิน">ฝ่ายบัญชี / แอดมิน</option>
+                        <option value="ผู้จัดการโครงการ">ผู้จัดการโครงการ</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">ทะเบียนรถประจำตัว</label>
+                    <input type="text" id="edit_car" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">รหัสผ่าน</label>
+                    <input type="text" id="edit_pass" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition shadow mt-4">บันทึกการแก้ไข</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCl3JhdjwuVSlRedhSaTp4e7qQweZrrNbA",
@@ -847,7 +881,6 @@
         let tempAdvBillBase64 = "";
         let tempFuelStartBase64 = "";
         let tempFuelEndBase64 = "";
-        let tempFuelBillBase64 = "";
 
         let currentHistoryFilter = 'all';
         let chartInstance = null;
@@ -894,6 +927,41 @@
             if (modal) {
                 modal.classList.add('hidden');
                 document.getElementById('modalImageElem').src = '';
+            }
+        }
+
+        function openEditUserModal(phone, name, position, car, pass) {
+            document.getElementById('edit_phone_key').value = phone;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_position').value = position;
+            document.getElementById('edit_car').value = car;
+            document.getElementById('edit_pass').value = pass;
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+        }
+
+        async function saveEditedUser(e) {
+            e.preventDefault();
+            const phone = document.getElementById('edit_phone_key').value;
+            const name = document.getElementById('edit_name').value.trim();
+            const position = document.getElementById('edit_position').value;
+            const car = document.getElementById('edit_car').value.trim();
+            const pass = document.getElementById('edit_pass').value.trim();
+
+            try {
+                await db.collection("employees").doc(phone).update({
+                    name: name,
+                    position: position,
+                    car: car,
+                    pass: pass
+                });
+                alert('✅ แก้ไขข้อมูลพนักงานเรียบร้อยแล้ว');
+                closeEditUserModal();
+            } catch (err) {
+                alert('❌ เกิดข้อผิดพลาด: ' + err.message);
             }
         }
 
@@ -1010,7 +1078,7 @@
                 } else if (type === 'idcard') {
                     tempIDCardBase64 = base64;
                     document.getElementById('idcard_preview').src = base64;
-                    document.getElementById('idcard_preview_container').classList.remove('hidden');
+                    document.getElementById('idcard_preview_container').classList.add('hidden');
                 } else if (type === 'reimb_bill') {
                     tempReimbBillBase64 = base64;
                     document.getElementById('reimb_bill_preview').src = base64;
@@ -1021,10 +1089,10 @@
                     document.getElementById('adv_bill_preview_container').classList.remove('hidden');
                 } else if (type === 'mile_start') {
                     tempFuelStartBase64 = base64;
+                    document.getElementById('mile_start_preview_container').classList.remove('hidden');
                 } else if (type === 'mile_end') {
                     tempFuelEndBase64 = base64;
-                } else if (type === 'fuel_bill') {
-                    tempFuelBillBase64 = base64;
+                    document.getElementById('mile_end_preview_container').classList.remove('hidden');
                 }
             });
         }
@@ -1137,7 +1205,10 @@
                         <td class="p-3 text-xs">${emp.position}<br>ทะเบียน: ${emp.car}</td>
                         <td class="p-3 text-xs font-mono">${emp.phone}</td>
                         <td class="p-3 text-center">${statusHtml}</td>
-                        <td class="p-3 text-center"><button type="button" onclick="db.collection('employees').doc('${emp.phone}').delete()" class="bg-red-500 text-white text-xs px-2.5 py-1.5 rounded-lg">ลบ</button></td>
+                        <td class="p-3 text-center space-x-1">
+                            <button type="button" onclick="openEditUserModal('${emp.phone}', '${emp.name}', '${emp.position}', '${emp.car}', '${emp.pass}')" class="bg-blue-500 text-white text-xs px-2 py-1.5 rounded-lg">แก้ไข</button>
+                            <button type="button" onclick="db.collection('employees').doc('${emp.phone}').delete()" class="bg-red-500 text-white text-xs px-2 py-1.5 rounded-lg">ลบ</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -1307,15 +1378,18 @@
             }
 
             let payrollItems = records.filter(item => item.category === 'ค่าแรงพนักงาน');
+            let fuelItems = records.filter(item => item.category === 'ค่าน้ำมันรถ' && item.status === 'อนุมัติแล้ว');
             let advanceItems = records.filter(item => item.category === 'เบิกเงิน' && item.status === 'อนุมัติแล้ว');
 
             if (isManagerOrAdmin) {
                 if (selectedEmp && selectedEmp !== 'ALL') {
                     payrollItems = payrollItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp || (item.detail && item.detail.includes(selectedEmp)));
+                    fuelItems = fuelItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp);
                     advanceItems = advanceItems.filter(item => item.targetEmployee === selectedEmp || item.creator === selectedEmp);
                 }
             } else {
                 payrollItems = payrollItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name || (item.detail && item.detail.includes(currentUser.name)));
+                fuelItems = fuelItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name);
                 advanceItems = advanceItems.filter(item => item.targetEmployee === currentUser.name || item.creator === currentUser.name);
             }
 
@@ -1328,6 +1402,19 @@
                     date: item.date,
                     empName: empName,
                     type: 'ค่าแรง',
+                    detail: item.detail,
+                    amount: item.amount || 0,
+                    isDeduction: false
+                });
+            });
+
+            fuelItems.forEach(item => {
+                let empName = item.targetEmployee || item.creator || 'พนักงาน';
+                dailyEntries.push({
+                    id: item.id,
+                    date: item.date,
+                    empName: empName,
+                    type: 'ค่าน้ำมันรถ (อนุมัติแล้ว)',
                     detail: item.detail,
                     amount: item.amount || 0,
                     isDeduction: false
@@ -1349,20 +1436,20 @@
 
             dailyEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            let totalWage = 0;
+            let totalIncome = 0;
             let totalAdvance = 0;
 
             dailyEntries.forEach(entry => {
                 if (entry.isDeduction) totalAdvance += entry.amount;
-                else totalWage += entry.amount;
+                else totalIncome += entry.amount;
             });
 
-            let netTotal = totalWage - totalAdvance;
+            let netTotal = totalIncome - totalAdvance;
 
             if (bigTotalElem) {
                 bigTotalElem.innerText = `${netTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
             }
-            if (subWageElem) subWageElem.innerText = `${totalWage.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
+            if (subWageElem) subWageElem.innerText = `${totalIncome.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
             if (subAdvElem) subAdvElem.innerText = `-${totalAdvance.toLocaleString('th-TH', { minimumFractionDigits: 2 })} ฿`;
 
             if (dailyEntries.length === 0) {
@@ -1665,6 +1752,11 @@
             const start = document.getElementById('f_mile_start').value;
             const end = document.getElementById('f_mile_end').value;
 
+            if (!tempFuelStartBase64 || !tempFuelEndBase64) {
+                alert('⚠️ กรุณาแนบรูปไมล์เริ่มต้นและรูปไมล์สิ้นสุดให้ครบถ้วนก่อนบันทึก');
+                return;
+            }
+
             const record = {
                 category: 'ค่าน้ำมันรถ',
                 creator: currentUser.name || 'พนักงาน',
@@ -1672,20 +1764,20 @@
                 date: date,
                 detail: `ค่าน้ำมันรถ (${fuelType}) ไมล์ ${start} -> ${end}`,
                 amount: amount,
-                status: 'ปกติ',
-                mile_start_img: tempFuelStartBase64 || null,
-                mile_end_img: tempFuelEndBase64 || null,
-                fuel_bill_img: tempFuelBillBase64 || null,
+                status: 'รออนุมัติ',
+                mile_start_img: tempFuelStartBase64,
+                mile_end_img: tempFuelEndBase64,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             await db.collection("records").add(record);
-            alert('✅ บันทึกค่าน้ำมันขึ้น Cloud สำเร็จ!');
+            alert('✅ บันทึกค่าน้ำมันขึ้น Cloud สำเร็จ! (รอผู้จัดการหรือแอดมินอนุมัติ)');
             document.getElementById('formFuel').reset();
             onFuelTypeChange();
             tempFuelStartBase64 = "";
             tempFuelEndBase64 = "";
-            tempFuelBillBase64 = "";
+            document.getElementById('mile_start_preview_container').classList.add('hidden');
+            document.getElementById('mile_end_preview_container').classList.add('hidden');
         }
 
         async function saveRevenue(e) {
@@ -1804,7 +1896,7 @@
             let records = window.cachedRecords || [];
             let expenses = records.filter(r => 
                 r.category === 'รายจ่าย' || 
-                r.category === 'ค่าน้ำมันรถ' || 
+                (r.category === 'ค่าน้ำมันรถ' && r.status === 'อนุมัติแล้ว') || 
                 r.category === 'ค่าแรงพนักงาน' || 
                 (r.category === 'สำรองจ่าย' && r.status === 'อนุมัติแล้ว') ||
                 (r.category === 'เบิกเงิน' && r.status === 'อนุมัติแล้ว')
@@ -1995,7 +2087,6 @@
                     let btns = [];
                     if (item.mile_start_img) btns.push(`<button type="button" onclick="showImageModal('${item.mile_start_img}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2 py-0.5 rounded cursor-pointer">ไมล์เริ่ม</button>`);
                     if (item.mile_end_img) btns.push(`<button type="button" onclick="showImageModal('${item.mile_end_img}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2 py-0.5 rounded cursor-pointer">ไมล์จบ</button>`);
-                    if (item.fuel_bill_img) btns.push(`<button type="button" onclick="showImageModal('${item.fuel_bill_img}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-0.5 rounded cursor-pointer">บิลน้ำมัน</button>`);
                     if (btns.length > 0) {
                         evidenceHtml = `<div class="flex flex-wrap gap-1 justify-center">${btns.join(' ')}</div>`;
                     }
@@ -2003,7 +2094,7 @@
 
                 let actionHtml = `<button type="button" onclick="deleteRecord('${item.id}')" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>`;
 
-                if (isAdmin && (item.category === 'เบิกเงิน' || item.category === 'สำรองจ่าย' || item.category === 'ขอลา')) {
+                if (isAdmin && (item.category === 'เบิกเงิน' || item.category === 'สำรองจ่าย' || item.category === 'ขอลา' || item.category === 'ค่าน้ำมันรถ')) {
                     let currentStatus = item.status || 'รออนุมัติ';
                     actionHtml = `
                         <div class="flex items-center justify-center gap-1.5">
@@ -2012,7 +2103,7 @@
                                 <option value="อนุมัติแล้ว" ${currentStatus === 'อนุมัติแล้ว' ? 'selected' : ''}>✅ อนุมัติแล้ว</option>
                                 <option value="ไม่อนุมัติ" ${currentStatus === 'ไม่อนุมัติ' ? 'selected' : ''}>❌ ไม่อนุมัติ</option>
                             </select>
-                            <button type="button" onclick="deleteRecord('${item.id}')" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded">ลบ</button>
+                            <button type="button" onclick="deleteRecord('${item.id}')" class="bg-red-500 text-white text-xs px-2 py-1 rounded">ลบ</button>
                         </div>
                     `;
                 } else if (item.status && item.status !== 'ปกติ' && item.status !== 'สำเร็จ') {
@@ -2063,26 +2154,32 @@
             const btnFinancialChart = document.getElementById('btn-financial-chart');
             const btnHistory = document.getElementById('btn-history');
             const priceInput = document.getElementById('f_price_custom');
+            const rateInput = document.getElementById('f_rate');
             const priceStatus = document.getElementById('f_price_status');
 
             if (currentUser && currentUser.name) {
-                authView.classList.add('hidden');
-                appView.classList.remove('hidden');
+                if (authView) authView.classList.add('hidden');
+                if (appView) appView.classList.remove('hidden');
                 
-                document.getElementById('sidebar-user-name').innerText = currentUser.name;
-                document.getElementById('sidebar-user-role').innerText = currentUser.position || 'พนักงาน';
-                if (currentUser.car) document.getElementById('sidebar-user-car').innerText = `🚗 ${currentUser.car}`;
+                const userNameElem = document.getElementById('sidebar-user-name');
+                const userRoleElem = document.getElementById('sidebar-user-role');
+                const userCarElem = document.getElementById('sidebar-user-car');
+
+                if (userNameElem) userNameElem.innerText = currentUser.name;
+                if (userRoleElem) userRoleElem.innerText = currentUser.position || 'พนักงาน';
+                if (userCarElem && currentUser.car) userCarElem.innerText = `🚗 ${currentUser.car}`;
                 
-                // จัดการแสดงผลรูปโปรไฟล์ด้านข้าง
                 const avatarImg = document.getElementById('sidebar-avatar-img');
                 const avatarPlaceholder = document.getElementById('sidebar-avatar-placeholder');
                 if (currentUser.avatar_img) {
-                    avatarImg.src = currentUser.avatar_img;
-                    avatarImg.classList.remove('hidden');
-                    avatarPlaceholder.classList.add('hidden');
+                    if (avatarImg) {
+                        avatarImg.src = currentUser.avatar_img;
+                        avatarImg.classList.remove('hidden');
+                    }
+                    if (avatarPlaceholder) avatarPlaceholder.classList.add('hidden');
                 } else {
-                    avatarImg.classList.add('hidden');
-                    avatarPlaceholder.classList.remove('hidden');
+                    if (avatarImg) avatarImg.classList.add('hidden');
+                    if (avatarPlaceholder) avatarPlaceholder.classList.remove('hidden');
                 }
 
                 const isManagerOrAdmin = currentUser.isAdmin || (currentUser.position && (currentUser.position.includes('ผู้จัดการ') || currentUser.position.includes('ฝ่ายบัญชี')));
@@ -2095,12 +2192,20 @@
                         priceInput.removeAttribute('readonly');
                         priceInput.classList.remove('bg-gray-50');
                     }
-                    if (priceStatus) priceStatus.innerText = "✓ Admin / ผู้จัดการ สามารถแก้ไขราคากลางได้";
+                    if (rateInput) {
+                        rateInput.removeAttribute('readonly');
+                        rateInput.classList.remove('bg-gray-50');
+                    }
+                    if (priceStatus) priceStatus.innerText = "✓ Admin / ผู้จัดการ สามารถแก้ไขราคากลางและอัตราสิ้นเปลืองได้";
                 } else {
                     adminOnlyButtons.forEach(btn => { if (btn) btn.classList.add('hidden'); });
                     if (priceInput) {
                         priceInput.setAttribute('readonly', true);
                         priceInput.classList.add('bg-gray-50');
+                    }
+                    if (rateInput) {
+                        rateInput.setAttribute('readonly', true);
+                        rateInput.classList.add('bg-gray-50');
                     }
                     if (priceStatus) priceStatus.innerText = "🔒 พนักงานทั่วไปแก้ไขราคากลางไม่ได้";
                 }
@@ -2110,8 +2215,8 @@
                 loadApprovedEmployeesToDropdown();
                 loadApprovedEmployeesToDropdownForIncome();
             } else {
-                authView.classList.remove('hidden');
-                appView.classList.add('hidden');
+                if (authView) authView.classList.remove('hidden');
+                if (appView) appView.classList.add('hidden');
             }
         }
     </script>
