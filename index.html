@@ -554,7 +554,8 @@
                                 </div>
                                 <div class="text-left sm:text-right">
                                     <p class="text-sm font-bold text-gray-800">พนักงาน: <span id="print_emp_name">-</span></p>
-                                    <p class="text-xs text-gray-600">สถานะ: ยอดรอตัดจ่ายรอบปัจจุบัน</p>
+                                    <p class="text-xs text-gray-600">เลขบัตรประชาชน: <span id="print_emp_idcard">-</span></p>
+                                    <p class="text-xs text-gray-600 mt-0.5">สถานะ: ยอดรอตัดจ่ายรอบปัจจุบัน</p>
                                 </div>
                             </div>
                         </div>
@@ -859,6 +860,10 @@
                     <input type="text" id="edit_name" required class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">เลขบัตรประชาชน</label>
+                    <input type="text" id="edit_idcard_number" maxlength="13" placeholder="ระบุเลขบัตรประชาชน 13 หลัก" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">ตำแหน่งงาน</label>
                     <select id="edit_position" class="w-full border rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
                         <option value="ช่างเทคนิคไฟฟ้า / EV Charger">ช่างเทคนิคไฟฟ้า / EV Charger</option>
@@ -962,9 +967,10 @@
             }
         }
 
-        function openEditUserModal(phone, name, position, car, pass) {
+        function openEditUserModal(phone, name, position, car, pass, idcardNumber) {
             document.getElementById('edit_phone_key').value = phone;
             document.getElementById('edit_name').value = name;
+            document.getElementById('edit_idcard_number').value = idcardNumber || '';
             document.getElementById('edit_position').value = position;
             document.getElementById('edit_car').value = car;
             document.getElementById('edit_pass').value = pass;
@@ -979,6 +985,7 @@
             e.preventDefault();
             const phone = document.getElementById('edit_phone_key').value;
             const name = document.getElementById('edit_name').value.trim();
+            const idcardNumber = document.getElementById('edit_idcard_number').value.trim();
             const position = document.getElementById('edit_position').value;
             const car = document.getElementById('edit_car').value.trim();
             const pass = document.getElementById('edit_pass').value.trim();
@@ -986,6 +993,7 @@
             try {
                 await db.collection("employees").doc(phone).update({
                     name: name,
+                    idcard_number: idcardNumber,
                     position: position,
                     car: car,
                     pass: pass
@@ -1069,7 +1077,6 @@
             if (fAmount) fAmount.value = amount.toFixed(2);
         }
 
-        // ☁️ ฟังก์ชันฟังสถานะการอัปเดตเรทอัตราสิ้นเปลืองจาก Cloud แบบ Real-time
         function listenFuelRateRealtime() {
             db.collection("settings").doc("fuel_rate").onSnapshot((doc) => {
                 const rateInput = document.getElementById('f_rate');
@@ -1083,7 +1090,6 @@
             });
         }
 
-        // 💾 ฟังก์ชันบันทึกเรทอัตราสิ้นเปลืองขึ้น Cloud (สำหรับ Admin/ผู้จัดการ)
         async function saveFuelRateCloud() {
             const rateInput = document.getElementById('f_rate');
             const newRate = parseFloat(rateInput?.value) || 12.0;
@@ -1161,7 +1167,6 @@
             });
         }
 
-        // 🤖 ฟังก์ชัน AI สแกนบิล/ใบเสร็จรายจ่าย (โหมดความแม่นยำสูง High-Accuracy OCR)
         function handleAiScanExpenseBill(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1298,7 +1303,7 @@
                         <td class="p-3 text-xs font-mono">${emp.phone}</td>
                         <td class="p-3 text-center">${statusHtml}</td>
                         <td class="p-3 text-center space-x-1">
-                            <button type="button" onclick="openEditUserModal('${emp.phone}', '${emp.name}', '${emp.position}', '${emp.car}', '${emp.pass}')" class="bg-blue-500 text-white text-xs px-2 py-1.5 rounded-lg">แก้ไข</button>
+                            <button type="button" onclick="openEditUserModal('${emp.phone}', '${emp.name}', '${emp.position}', '${emp.car}', '${emp.pass}', '${emp.idcard_number || ''}')" class="bg-blue-500 text-white text-xs px-2 py-1.5 rounded-lg">แก้ไข</button>
                             <button type="button" onclick="db.collection('employees').doc('${emp.phone}').delete()" class="bg-red-500 text-white text-xs px-2 py-1.5 rounded-lg">ลบ</button>
                         </td>
                     `;
@@ -1449,7 +1454,7 @@
             }
         }
 
-        function renderIncomeTable() {
+        async function renderIncomeTable() {
             let records = window.cachedRecords || [];
             const tbody = document.getElementById('incomeDailyList');
             const bigTotalElem = document.getElementById('income_big_total');
@@ -1458,6 +1463,7 @@
             const subTaxElem = document.getElementById('income_sub_tax');
             const filterEmpSelect = document.getElementById('income_filter_emp');
             const printEmpName = document.getElementById('print_emp_name');
+            const printEmpIdCard = document.getElementById('print_emp_idcard');
 
             const startDateVal = document.getElementById('income_start_date')?.value;
             const endDateVal = document.getElementById('income_end_date')?.value;
@@ -1471,6 +1477,24 @@
 
             if (printEmpName) {
                 printEmpName.innerText = (selectedEmp === 'ALL' || !selectedEmp) ? 'แสดงพนักงานทุกคน' : selectedEmp;
+            }
+
+            if (printEmpIdCard) {
+                if (selectedEmp === 'ALL' || !selectedEmp) {
+                    printEmpIdCard.innerText = '-';
+                } else {
+                    try {
+                        const empSnap = await db.collection("employees").where("name", "==", selectedEmp).get();
+                        if (!empSnap.empty) {
+                            const empData = empSnap.docs[0].data();
+                            printEmpIdCard.innerText = empData.idcard_number || 'ยังไม่ได้ระบุเลขบัตร';
+                        } else {
+                            printEmpIdCard.innerText = '-';
+                        }
+                    } catch (e) {
+                        printEmpIdCard.innerText = '-';
+                    }
+                }
             }
 
             let payrollItems = records.filter(item => item.category === 'ค่าแรงพนักงาน');
