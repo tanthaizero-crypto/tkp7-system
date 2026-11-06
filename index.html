@@ -267,8 +267,8 @@
                         </div>
 
                         <div id="face_preview_container" class="mt-2 hidden">
-                            <img id="face_preview" class="max-h-40 mx-auto rounded-xl border shadow-md" alt="ภาพสแกนหน้า">
-                            <span class="text-xs text-indigo-600 font-semibold mt-1 block">✓ ถ่ายภาพใบหน้าสำเร็จ พร้อมบันทึกเวลา</span>
+                            <img id="face_preview" class="max-h-56 mx-auto rounded-xl border shadow-md" alt="ภาพสแกนหน้า">
+                            <span class="text-xs text-indigo-600 font-semibold mt-1 block">✓ ถ่ายภาพใบหน้าสำเร็จ พร้อมบันทึกเวลา และวันที่ในภาพ</span>
                             <button type="button" onclick="retakePhoto()" class="text-xs text-red-600 underline mt-1">ถ่ายภาพใหม่</button>
                         </div>
 
@@ -913,6 +913,7 @@
         let tempAvatarBase64 = "";
         let tempIDCardBase64 = "";
         let tempFaceBase64 = "";
+        let tempFaceTimeStr = "";
         let tempReimbBillBase64 = "";
         let tempAdvBillBase64 = "";
         let tempFuelStartBase64 = "";
@@ -1678,11 +1679,49 @@
             const previewCont = document.getElementById('face_preview_container');
             const btnSave = document.getElementById('btn-save-attendance');
             if (!video || !canvas) return;
-            canvas.width = 480;
-            canvas.height = 360;
+
+            const targetWidth = video.videoWidth || 640;
+            const targetHeight = video.videoHeight || 480;
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, 480, 360);
-            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            
+            // วาดภาพจากวิดีโอกล้อง
+            ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
+
+            // สร้างสตริง วันที่ และ เวลาปัจจุบัน
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const dateStr = `${year}-${month}-${day}`;
+            const timeStr = `${hours}:${minutes}:${seconds}`;
+            const fullTimeStampStr = `${dateStr} ${timeStr} น.`;
+            tempFaceTimeStr = `${dateStr} ${timeStr}`;
+
+            // ประทับตราวันที่และเวลาลงบนภาพถ่่าย (Watermark)
+            const fontSize = Math.max(14, Math.floor(targetWidth / 25));
+            ctx.font = `bold ${fontSize}px Prompt, sans-serif`;
+
+            // พื้นหลังข้อความ
+            const textWidth = ctx.measureText(fullTimeStampStr).width;
+            const padding = 10;
+            const rectX = 15;
+            const rectY = targetHeight - fontSize - (padding * 2);
+            
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+            ctx.fillRect(rectX, rectY, textWidth + (padding * 2), fontSize + padding);
+
+            // ตัวหนังสือวันที่เวลา (สีเหลืองสว่าง)
+            ctx.fillStyle = '#facc15';
+            ctx.fillText(fullTimeStampStr, rectX + padding, targetHeight - padding - 4);
+
+            tempFaceBase64 = canvas.toDataURL('image/jpeg', 0.85);
             if (preview) preview.src = tempFaceBase64;
             if (previewCont) previewCont.classList.remove('hidden');
             if (btnSave) btnSave.classList.remove('hidden');
@@ -1690,25 +1729,31 @@
 
         function retakePhoto() {
             tempFaceBase64 = "";
+            tempFaceTimeStr = "";
             document.getElementById('face_preview_container').classList.add('hidden');
             document.getElementById('btn-save-attendance').classList.add('hidden');
         }
 
         async function saveAttendance() {
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const fullTime = tempFaceTimeStr || `${dateStr} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
             const record = { 
                 category: 'สแกนหน้าเข้างาน', 
-                date: new Date().toISOString().split('T')[0], 
+                date: dateStr, 
+                full_time: fullTime,
                 creator: currentUser.name || 'พนักงาน', 
                 targetEmployee: currentUser.name || 'พนักงาน', 
-                detail: 'เช็คอินเข้างาน', 
+                detail: `เช็คอินเข้างาน (เวลา ${fullTime.split(' ')[1] || ''})`, 
                 amount: 0, 
                 status: 'สำเร็จ',
                 face_img: tempFaceBase64 || null,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp() 
             };
             await db.collection("records").add(record);
-            alert('✅ เช็คอินเข้างานสำเร็จ!');
+            alert('✅ เช็คอินเข้างานสำเร็จ พร้อมประทับวันที่และเวลาลงบนระบบแล้ว!');
             retakePhoto();
         }
 
@@ -2202,7 +2247,11 @@
                 return;
             }
 
-            filtered.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            filtered.sort((a, b) => {
+                const timeA = a.full_time || a.date || '';
+                const timeB = b.full_time || b.date || '';
+                return timeB.localeCompare(timeA);
+            });
 
             const currentUser = JSON.parse(sessionStorage.getItem('tkp7_user')) || {};
             const isAdmin = currentUser.isAdmin;
@@ -2243,8 +2292,11 @@
                     actionHtml = `<span class="text-xs font-semibold px-2 py-1 rounded border ${badgeColor}">${item.status}</span>`;
                 }
 
+                // รูปแบบการแสดงผล วันที่และเวลา ในตารางประวัติ
+                let displayTime = item.full_time ? `${item.full_time} น.` : item.date;
+
                 tr.innerHTML = `
-                    <td class="p-3 text-xs sm:text-sm">${item.date}</td>
+                    <td class="p-3 text-xs sm:text-sm font-mono text-gray-700 whitespace-nowrap">${displayTime}</td>
                     <td class="p-3 text-xs text-gray-600">${item.creator || '-'}</td>
                     <td class="p-3 text-xs sm:text-sm"><b>[${item.category}]</b> ${item.detail}</td>
                     <td class="p-3 text-right font-medium">${item.amount ? item.amount.toLocaleString('th-TH', {minimumFractionDigits: 2}) : '-'}</td>
